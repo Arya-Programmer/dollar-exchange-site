@@ -241,11 +241,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Issues**: [GitHub Issues](https://github.com/your-username/iraqi-exchange-dashboard/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/your-username/iraqi-exchange-dashboard/discussions)
-- **Email**: your-email@example.com
+- **Email**: aryakurdo@gmail.com
 
 ---
 
 **Built with ❤️ for the Iraqi financial community**
 
+```
+```
 *Last updated: $(date)*
 ```
