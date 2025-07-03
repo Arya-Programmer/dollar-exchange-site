@@ -16,9 +16,9 @@ import { CurrencyConverter } from "./components/currency-converter"
 
 // Static data - never changes, defined outside component
 const CITIES = [
-    { value: "سلیمانی", label: "سلیمانی", english: "Sulaymaniyah", flag: "🏛️" },
+    { value: "سڵێمانی", label: "سڵێمانی", english: "Sulaymaniyah", flag: "🏛️" },
     { value: "هەولێر", label: "هەولێر", english: "Erbil", flag: "🏰" },
-    { value: "دهوک", label: "دهوک", english: "Duhok", flag: "🏔️" },
+    { value: "دهۆک", label: "دهۆک", english: "Duhok", flag: "🏔️" },
     { value: "بغداد", label: "بغداد", english: "Baghdad", flag: "🕌" },
     { value: "بصره", label: "البصرة", english: "Basra", flag: "🏖️" },
 ]
