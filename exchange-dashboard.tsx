@@ -23,9 +23,9 @@ const CITIES = [
     { value: "بصره", label: "البصرة", english: "Basra", flag: "🏖️" },
 ]
 
-export default function ExchangeDashboard() {
+export default function ExchangeDashboard(){
     const { colors } = useTheme()
-    const [selectedCity, setSelectedCity] = useState("سلیمانی")
+    const [selectedCity, setSelectedCity] = useState("سلێمانی")
     const [selectedRateType, setSelectedRateType] = useState<"sur" | "penji">("penji")
 
     // Custom hooks for data management

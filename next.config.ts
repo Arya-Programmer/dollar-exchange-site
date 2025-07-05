@@ -1,15 +1,23 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import nextPwa from 'next-pwa';
+import type { NextConfig } from 'next';
+
+const withPWA = nextPwa({
+    dest: 'public',
+    register: true,
+    skipWaiting: true,
+    // disable: process.env.NODE_ENV === 'development',   // handy during dev
+});
+
+const nextConfig: NextConfig = {
     eslint: {
-        ignoreDuringBuilds: true,
+        ignoreDuringBuilds: true
     },
     typescript: {
-        ignoreBuildErrors: true,
+        ignoreBuildErrors: true
     },
     images: {
-        // This allows using images from /public/images without any extra config
-        unoptimized: false, // keep image optimization enabled (recommended)
+        unoptimized: false
     },
 };
 
-export default nextConfig;
+export default withPWA(nextConfig);
