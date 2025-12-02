@@ -4,7 +4,6 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    console.log(body);
     if (!Array.isArray(body)) {
       return NextResponse.json(
         { error: "Request body must be an array of objects" },
