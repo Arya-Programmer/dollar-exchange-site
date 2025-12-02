@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/lib/theme-context"
+import {AuthProvider} from "@/lib/auth-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -22,7 +23,9 @@ export default function RootLayout({
                 <meta name="apple-mobile-web-app-title" content="Dollar Price" />
             </head>
             <body className={inter.className}>
+            <AuthProvider>
                 <ThemeProvider>{children}</ThemeProvider>
+            </AuthProvider>
             </body>
         </html>
     )
