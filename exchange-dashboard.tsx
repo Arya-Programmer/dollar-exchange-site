@@ -14,6 +14,7 @@ import { CurrentRateCard } from "./components/current-rate-card";
 import { ExchangeChart } from "./components/exchange-chart";
 import { CurrencyConverter } from "./components/currency-converter";
 import { Button } from "./components/ui/button";
+import { Download } from "lucide-react";
 
 // Static data - never changes, defined outside component
 const CITIES = [
