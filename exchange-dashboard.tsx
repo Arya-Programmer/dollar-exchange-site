@@ -135,7 +135,7 @@ export default function ExchangeDashboard() {
             window.URL.revokeObjectURL(url);
           }}
         >
-          Download me
+          Export CSV
         </Button>
 
         <CurrencyConverter
