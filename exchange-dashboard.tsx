@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { useState, useMemo, useCallback } from "react"
-import { useTheme } from "./lib/theme-context"
-import { useExchangeData } from "./hooks/use-exchange-data"
-import { useRateCalculations } from "./hooks/use-rate-calculations"
-import { useChartData } from "./hooks/use-chart-data"
-import { useCurrencyConverter } from "./hooks/use-currency-converter"
-import { useRateTypeLoading } from "./hooks/use-rate-type-loading"
-import { Navbar } from "./components/dashboard-header"
-import { CitySelector } from "./components/city-selector"
-import { RateTypeSelector } from "./components/rate-type-selector"
-import { CurrentRateCard } from "./components/current-rate-card"
-import { ExchangeChart } from "./components/exchange-chart"
-import { CurrencyConverter } from "./components/currency-converter"
-import { DebugPanel } from "./components/debug-panel"
+import { useCallback, useMemo, useState } from "react";
+import { useTheme } from "./lib/theme-context";
+import { useExchangeData } from "./hooks/use-exchange-data";
+import { useRateCalculations } from "./hooks/use-rate-calculations";
+import { useChartData } from "./hooks/use-chart-data";
+import { useCurrencyConverter } from "./hooks/use-currency-converter";
+import { useRateTypeLoading } from "./hooks/use-rate-type-loading";
+import { DashboardHeader } from "./components/dashboard-header";
+import { CitySelector } from "./components/city-selector";
+import { RateTypeSelector } from "./components/rate-type-selector";
+import { CurrentRateCard } from "./components/current-rate-card";
+import { ExchangeChart } from "./components/exchange-chart";
+import { CurrencyConverter } from "./components/currency-converter";
+import { Button } from "./components/ui/button";
 
 // Static data - never changes, defined outside component
 const CITIES = [
@@ -21,82 +21,73 @@ const CITIES = [
   { value: "هەولێر", label: "هەولێر", english: "Erbil", flag: "🏰" },
   { value: "دهۆک", label: "دهۆک", english: "Duhok", flag: "🏔️" },
   { value: "بغداد", label: "بغداد", english: "Baghdad", flag: "🕌" },
-  { value: "البصرة", label: "البصرة", english: "Basra", flag: "🏖️" },
-]
+  { value: "بصره", label: "البصرة", english: "Basra", flag: "🏖️" },
+];
 
 export default function ExchangeDashboard() {
-  const { colors, loading: themeLoading, error: themeError } = useTheme()
-  const [selectedCity, setSelectedCity] = useState("سلێمانی")
-  const [selectedRateType, setSelectedRateType] = useState<"sur" | "penji">("penji")
+  const { colors } = useTheme();
+  const [selectedCity, setSelectedCity] = useState("سلێمانی");
+  const [selectedRateType, setSelectedRateType] = useState<"sur" | "penji">(
+    "penji",
+  );
 
   // Custom hooks for data management
-  const { exchangeData, loading, error, refetch } = useExchangeData(selectedCity)
-  const { filteredRates, latestRate, rateCalculations } = useRateCalculations(exchangeData, selectedRateType)
-  const { chartData, yAxisDomain } = useChartData(filteredRates)
-  const { usdAmount, iqdAmount, handleUsdChange, handleIqdChange } = useCurrencyConverter(latestRate)
-  const rateTypeLoading = useRateTypeLoading(selectedRateType)
+  const { exchangeData, loading, error, refetch } = useExchangeData(
+    selectedCity,
+  );
+  const { filteredRates, latestRate, rateCalculations } = useRateCalculations(
+    exchangeData,
+    selectedRateType,
+  );
+  const { chartData, yAxisDomain } = useChartData(filteredRates);
+  const { usdAmount, iqdAmount, handleUsdChange, handleIqdChange } =
+    useCurrencyConverter(latestRate);
+  const rateTypeLoading = useRateTypeLoading(selectedRateType);
 
   // Memoize: Selected city info
-  const selectedCityInfo = useMemo(() => CITIES.find((city) => city.value === selectedCity), [selectedCity])
+  const selectedCityInfo = useMemo(
+    () => CITIES.find((city) => city.value === selectedCity),
+    [selectedCity],
+  );
 
   // Event handlers - memoized to prevent unnecessary re-renders
   const handleCityChange = useCallback((city: string) => {
-    setSelectedCity(city)
-  }, [])
+    setSelectedCity(city);
+  }, []);
 
   const handleRateTypeSelect = useCallback((rateType: "sur" | "penji") => {
-    setSelectedRateType(rateType)
-  }, [])
+    setSelectedRateType(rateType);
+  }, []);
 
-  // Show loading state while theme is loading
-  if (themeLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="text-center space-y-4">
-          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <div className="text-gray-600">Loading theme...</div>
-        </div>
-      </div>
-    )
-  }
-
-  // Show error state if theme failed to load
-  if (themeError && !colors) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="text-center space-y-4 max-w-md p-6">
-          <div className="text-red-500 text-xl">⚠️</div>
-          <h2 className="text-xl font-bold text-gray-800">Theme Loading Error</h2>
-          <p className="text-gray-600">{themeError}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-          >
-            Reload Page
-          </button>
-        </div>
-      </div>
-    )
-  }
-
-  // Fallback if colors still not available
+  // Early return if colors not available
   if (!colors) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center space-y-4">
-          <div className="text-2xl">🔄</div>
-          <div className="text-gray-800">Initializing application...</div>
-        </div>
-      </div>
-    )
+    return null;
   }
 
+  const convertedData = chartData.map((item) => {
+    return {
+      fullDate: item.fullDate,
+      "Rate(IQD)": item.rate,
+      type: item.type,
+      city: selectedCity,
+    };
+  });
+
+  console.log(convertedData);
   return (
-    <div className="min-h-screen transition-colors duration-300" style={{ backgroundColor: colors.background }}>
-      <Navbar colors={colors} />
+    <div
+      className="min-h-screen transition-colors duration-300"
+      style={{ backgroundColor: colors.background }}
+    >
+      <DashboardHeader colors={colors} />
 
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        <CitySelector cities={CITIES} selectedCity={selectedCity} onCityChange={handleCityChange} colors={colors} />
+        <CitySelector
+          cities={CITIES}
+          selectedCity={selectedCity}
+          onCityChange={handleCityChange}
+          colors={colors}
+        />
 
         <RateTypeSelector
           selectedRateType={selectedRateType}
@@ -125,6 +116,27 @@ export default function ExchangeDashboard() {
           onRetry={refetch}
           colors={colors}
         />
+        <Button
+          onClick={async () => {
+            const res = await fetch("/api/csv", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(convertedData),
+            });
+
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "exchange-data.csv";
+            a.click();
+
+            window.URL.revokeObjectURL(url);
+          }}
+        >
+          Export CSV
+        </Button>
 
         <CurrencyConverter
           latestRate={latestRate}
@@ -136,8 +148,6 @@ export default function ExchangeDashboard() {
           colors={colors}
         />
       </div>
-
-      <DebugPanel />
     </div>
-  )
+  );
 }
