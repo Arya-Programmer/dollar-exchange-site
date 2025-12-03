@@ -1,19 +1,19 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { useTheme } from "./lib/theme-context";
-import { useExchangeData } from "./hooks/use-exchange-data";
-import { useRateCalculations } from "./hooks/use-rate-calculations";
-import { useChartData } from "./hooks/use-chart-data";
-import { useCurrencyConverter } from "./hooks/use-currency-converter";
-import { useRateTypeLoading } from "./hooks/use-rate-type-loading";
-import { DashboardHeader } from "./components/dashboard-header";
-import { CitySelector } from "./components/city-selector";
-import { RateTypeSelector } from "./components/rate-type-selector";
-import { CurrentRateCard } from "./components/current-rate-card";
-import { ExchangeChart } from "./components/exchange-chart";
-import { CurrencyConverter } from "./components/currency-converter";
-import { Button } from "./components/ui/button";
+import { useTheme } from "@/lib/theme-context";
+import { useExchangeData } from "@/hooks/use-exchange-data";
+import { useRateCalculations } from "@/hooks/use-rate-calculations";
+import { useChartData } from "@/hooks/use-chart-data";
+import { useCurrencyConverter } from "@/hooks/use-currency-converter";
+import { useRateTypeLoading } from "@/hooks/use-rate-type-loading";
+import { DashboardHeader } from "@/components/dashboard-header";
+import { CitySelector } from "@/components/city-selector";
+import { RateTypeSelector } from "@/components/rate-type-selector";
+import { CurrentRateCard } from "@/components/current-rate-card";
+import { ExchangeChart } from "@/components/exchange-chart";
+import { CurrencyConverter } from "@/components/currency-converter";
+import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 
 // Static data - never changes, defined outside component

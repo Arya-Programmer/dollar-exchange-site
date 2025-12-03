@@ -54,7 +54,7 @@ export function DebugPanel() {
                 sessionStorage.clear()
                 window.location.reload()
               }}
-              className="bg-red-600 text-white px-2 py-1 rounded text-xs"
+              className="bg-red-600 text-white px-2 py-1 rounded-sm text-xs"
             >
               Clear Storage & Reload
             </button>

@@ -136,7 +136,7 @@ export const ExchangeChart = memo(function ExchangeChart({
                     const data = payload[0].payload
                     return (
                       <div
-                        className="p-6 rounded-3xl shadow-2xl border backdrop-blur-sm"
+                        className="p-6 rounded-3xl shadow-2xl border backdrop-blur-xs"
                         style={{
                           backgroundColor: `${colors.card}f0`,
                           border: `1px solid ${colors.border}`,

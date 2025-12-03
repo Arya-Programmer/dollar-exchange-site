@@ -105,7 +105,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "signin" }: AuthModal
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center">
+    <div className="fixed inset-0 z-100 flex items-center justify-center">
       {/* Backdrop with blur */}
       <div
         className="absolute inset-0 backdrop-blur-md transition-all duration-300"

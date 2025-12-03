@@ -74,7 +74,7 @@ export const CurrentRateCard = memo(function CurrentRateCard({
             style={{
               objectFit: "cover",
               objectPosition: "center right",
-              transform: "scale(1.1) translateX(10%)",
+              transform: "scale(1.1)",
             }}
             priority
           />
@@ -131,7 +131,7 @@ export const CurrentRateCard = memo(function CurrentRateCard({
                 {selectedCityInfo?.flag}
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-white drop-shadow-sm">{selectedCityInfo?.english}</h3>
+                <h3 className="text-2xl font-bold text-white drop-shadow-xs">{selectedCityInfo?.english}</h3>
                 <div className="flex items-center gap-2 text-white/90 mt-1">
                   <Clock className="h-4 w-4" />
                   <span className="text-sm font-medium">
@@ -148,7 +148,7 @@ export const CurrentRateCard = memo(function CurrentRateCard({
 
             {/* Rate type badge */}
             <div
-              className="px-4 py-2 rounded-2xl text-sm font-bold shadow-lg backdrop-blur-sm"
+              className="px-4 py-2 rounded-2xl text-sm font-bold shadow-lg backdrop-blur-xs"
               style={{
                 backgroundColor: "rgba(255,255,255,0.25)",
                 color: "white",
@@ -171,7 +171,7 @@ export const CurrentRateCard = memo(function CurrentRateCard({
             {/* Change indicator */}
             <div className="text-right space-y-1">
               <div
-                className={`flex items-center gap-2 text-xl font-bold px-3 py-2 rounded-xl backdrop-blur-sm ${
+                className={`flex items-center gap-2 text-xl font-bold px-3 py-2 rounded-xl backdrop-blur-xs ${
                   rateCalculations.rateChange >= 0 ? "text-green-100 bg-green-500/30" : "text-red-100 bg-red-500/30"
                 }`}
               >

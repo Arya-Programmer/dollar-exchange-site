@@ -62,7 +62,7 @@ export const CurrencyConverter = memo(function CurrencyConverter({
               placeholder="Enter USD amount"
               value={usdAmount}
               onChange={(e) => onUsdChange(e.target.value)}
-              className="w-full p-4 rounded-2xl text-lg font-medium transition-all duration-300 focus:ring-2 focus:outline-none"
+              className="w-full p-4 rounded-2xl text-lg font-medium transition-all duration-300 focus:ring-2 focus:outline-hidden"
               style={{
                 backgroundColor: colors.formBackground,
                 border: `1px solid ${colors.formBorder}`,
@@ -85,7 +85,7 @@ export const CurrencyConverter = memo(function CurrencyConverter({
               placeholder="Enter IQD amount"
               value={iqdAmount}
               onChange={(e) => onIqdChange(e.target.value)}
-              className="w-full p-4 rounded-2xl text-lg font-medium transition-all duration-300 focus:ring-2 focus:outline-none"
+              className="w-full p-4 rounded-2xl text-lg font-medium transition-all duration-300 focus:ring-2 focus:outline-hidden"
               style={{
                 backgroundColor: colors.formBackground,
                 border: `1px solid ${colors.formBorder}`,

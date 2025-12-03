@@ -319,7 +319,7 @@ export default function Visualizations() {
                   </div>
 
                   {/* Chart content */}
-                  <div className={isLocked ? "blur-sm pointer-events-none select-none" : ""}>{chart.component}</div>
+                  <div className={isLocked ? "blur-xs pointer-events-none select-none" : ""}>{chart.component}</div>
 
                   {isLocked && (
                     <div

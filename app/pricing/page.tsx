@@ -160,7 +160,7 @@ export default function Pricing() {
                       <div className="space-y-3 pt-4 border-t" style={{ borderColor: colors.border }}>
                         {tier.features.map((feature) => (
                           <div key={feature} className="flex items-start gap-3">
-                            <CheckCircle className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: colors.primary }} />
+                            <CheckCircle className="h-5 w-5 mt-0.5 shrink-0" style={{ color: colors.primary }} />
                             <span style={{ color: colors.text }}>{feature}</span>
                           </div>
                         ))}

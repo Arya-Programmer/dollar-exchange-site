@@ -23,9 +23,7 @@ export default function RootLayout({
                 <meta name="apple-mobile-web-app-title" content="Dollar Price" />
             </head>
             <body className={inter.className}>
-            <AuthProvider>
-                <ThemeProvider>{children}</ThemeProvider>
-            </AuthProvider>
+            <AuthProvider> <ThemeProvider>{children}</ThemeProvider> </AuthProvider>
             </body>
         </html>
     )
