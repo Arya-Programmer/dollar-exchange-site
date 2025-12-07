@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { ExchangeRate, ExchangeRateApiProp } from "@/lib/interfaces";
 
-export function useCityComparisonData(city: string): ExchangeRateApiProp {
+export function useCityTrendData(city: string): ExchangeRateApiProp {
   const [cityData, setCityData] = useState<ExchangeRate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,17 +33,13 @@ export function useCityComparisonData(city: string): ExchangeRateApiProp {
   }
 
   useEffect(() => {
-    fetchCityTrendData(city)
-    const timeoutId = setTimeout(() => {
-      fetchCityTrendData(city);
-    }, 15 * 3600);
-    return () => clearTimeout(timeoutId);
-  }, []);
+    fetchCityTrendData(city);
+  }, [city]);
 
   return {
     cityData,
     loading,
     error,
-    fetchData: fetchCityTrendData,
+    fetchData: () => fetchCityTrendData(city),
   }
 }
