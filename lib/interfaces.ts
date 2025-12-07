@@ -5,6 +5,11 @@ export interface ExchangeRate {
   rate: number
   timestamp: string
   message_id?: number
+
+  max_rate?: number
+  average_rate?: number
+  min_rate?: number
+  week_number?: number
 }
 
 export interface ExchangeRateApiProp {

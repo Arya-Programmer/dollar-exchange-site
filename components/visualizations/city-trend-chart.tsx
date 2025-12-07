@@ -11,9 +11,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { format } from "date-fns";
-import { Loader2, AlertCircle, TrendingUp } from "lucide-react";
+import { Loader2, AlertCircle, TrendingUp, BarChart3 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { CustomTooltip } from "@/components/ui/tooltip";
 import { useTheme } from "@/lib/theme-context";
 import { useCityTrendData } from "@/hooks/visualizations/use-city-trend-data";
@@ -27,9 +26,9 @@ const CITIES = [
 ];
 
 const METRICS = [
-  { value: "min_rate", label: "Minimum" },
-  { value: "average_rate", label: "Average" },
-  { value: "max_rate", label: "Maximum" },
+  { value: "min_rate", label: "Low" },
+  { value: "average_rate", label: "Avg" },
+  { value: "max_rate", label: "High" },
 ];
 
 export default function CityTrendChart({ colors: propColors }: { colors?: any }) {
@@ -48,20 +47,21 @@ export default function CityTrendChart({ colors: propColors }: { colors?: any })
   const processedData = useMemo(() => {
     if (!cityData || cityData.length === 0) return [];
 
-    // Sort by timestamp just in case
+    // Sort by timestamp
     const sorted = [...cityData].sort(
       (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
     );
 
     return sorted.map((item) => ({
       ...item,
-      // Dynamic value based on selected metric (Min/Avg/Max)
-      // @ts-ignore - we know these keys exist from the API response
+      // Dynamic value based on selected metric. Fallback to 'rate' if specific metric is missing.
+      // @ts-ignore
       value: item[activeMetric] || item.rate,
       dateLabel: format(new Date(item.timestamp), "MMM d"),
       fullDate: format(new Date(item.timestamp), "PP p"),
     }));
   }, [cityData, activeMetric]);
+  console.log("PROCESSED DATA", processedData);
 
   // 5. Dynamic Domain Calculation (Zoom effect)
   const trendDomain = useMemo(() => {
@@ -74,158 +74,222 @@ export default function CityTrendChart({ colors: propColors }: { colors?: any })
     return [Math.floor(min - padding), Math.ceil(max + padding)];
   }, [processedData]);
 
-  // 6. Loading / Error States
+  // Loading State
   if (loading && processedData.length === 0) {
     return (
-      <div className="flex h-[320px] w-full items-center justify-center rounded-3xl border border-dashed p-8" style={{ borderColor: colors.border }}>
-        <div className="flex flex-col items-center gap-2">
+      <div
+        className="flex h-[400px] w-full items-center justify-center rounded-3xl border border-dashed transition-all duration-300"
+        style={{ borderColor: colors.border, backgroundColor: colors.card }}
+      >
+        <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-8 w-8 animate-spin" style={{ color: colors.primary }} />
-          <span className="text-sm" style={{ color: colors.textMuted }}>Loading trends for {activeCity}...</span>
+          <span className="text-sm font-medium" style={{ color: colors.textMuted }}>
+            Loading {CITIES.find(c => c.value === activeCity)?.english} trends...
+          </span>
         </div>
       </div>
     );
   }
 
+  // Error State
   if (error) {
     return (
-      <div className="flex h-[320px] w-full items-center justify-center rounded-3xl border border-dashed p-8" style={{ borderColor: colors.border }}>
-        <div className="flex flex-col items-center gap-3 text-center">
-          <AlertCircle className="h-8 w-8 text-red-500" />
-          <p className="text-sm font-medium" style={{ color: colors.text }}>Unable to load data</p>
-          <Button variant="outline" size="sm" onClick={fetchData}>Retry</Button>
+      <div
+        className="flex h-[400px] w-full items-center justify-center rounded-3xl border border-dashed p-8 transition-all duration-300"
+        style={{ borderColor: colors.border, backgroundColor: colors.card }}
+      >
+        <div className="flex flex-col items-center gap-4 text-center max-w-xs">
+          <div className="p-3 rounded-full bg-red-100/10">
+            <AlertCircle className="h-8 w-8 text-red-500" />
+          </div>
+          <div>
+            <p className="font-semibold mb-1" style={{ color: colors.text }}>Unable to load data</p>
+            <p className="text-sm" style={{ color: colors.textMuted }}>{error}</p>
+          </div>
+          <button
+            onClick={fetchData}
+            className="px-6 py-2 rounded-xl text-sm font-medium transition-transform hover:scale-105"
+            style={{ backgroundColor: colors.primary, color: "white" }}
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full space-y-6">
+    <div
+      className="w-full rounded-3xl p-6 md:p-8 transition-all duration-300"
+      style={{
+        backgroundColor: colors.card,
+        border: `1px solid ${colors.border}`,
+        boxShadow: colors.shadow
+      }}
+    >
+      {/* HEADER SECTION */}
+      <div className="flex flex-col gap-6 mb-8">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl" style={{ backgroundColor: `${colors.primary}15` }}>
+              <BarChart3 className="h-6 w-6" style={{ color: colors.primary }} />
+            </div>
+            <div>
+              <h3 className="font-bold text-xl" style={{ color: colors.text }}>Market Trends</h3>
+              <p className="text-sm" style={{ color: colors.textMuted }}>Historical rate analysis</p>
+            </div>
+          </div>
 
-      {/* HEADER CONTROLS */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        {/* City Selector */}
-        <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 no-scrollbar mask-gradient">
-          {CITIES.map((city) => (
-            <Button
-              key={city.value}
-              variant={activeCity === city.value ? "default" : "outline"}
-              size="sm"
-              onClick={() => setActiveCity(city.value)}
-              className="gap-2 shadow-sm rounded-xl"
-              style={activeCity === city.value ? { backgroundColor: colors.primary, color: "#fff" } : {}}
-            >
-              <span>{city.flag}</span>
-              <span className="hidden sm:inline">{city.english}</span>
-              <span className="sm:hidden">{city.label}</span>
-            </Button>
-          ))}
+          {/* Metric Selector (Segmented Control) */}
+          <div
+            className="hidden sm:flex p-1 rounded-xl border"
+            style={{
+              backgroundColor: colors.backgroundElevated,
+              borderColor: colors.border
+            }}
+          >
+            {METRICS.map((metric) => {
+              const isActive = activeMetric === metric.value;
+              return (
+                <button
+                  key={metric.value}
+                  onClick={() => setActiveMetric(metric.value)}
+                  className="px-4 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200"
+                  style={{
+                    backgroundColor: isActive ? colors.card : "transparent",
+                    color: isActive ? colors.text : colors.textMuted,
+                    boxShadow: isActive ? colors.shadow : "none",
+                  }}
+                >
+                  {metric.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Metric Selector (Min/Avg/Max) */}
-        <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-xl border border-border/40 shrink-0">
-          {METRICS.map((metric) => (
-            <Button
-              key={metric.value}
-              variant={activeMetric === metric.value ? "secondary" : "ghost"}
-              size="sm"
-              onClick={() => setActiveMetric(metric.value)}
-              className={`h-7 text-xs rounded-lg ${activeMetric === metric.value
-                ? "bg-white dark:bg-zinc-800 shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-                }`}
-            >
-              {metric.label}
-            </Button>
-          ))}
+        {/* City Selector (Horizontal Scroll) */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 -mx-2 px-2 no-scrollbar">
+          {CITIES.map((city) => {
+            const isActive = activeCity === city.value;
+            return (
+              <button
+                key={city.value}
+                onClick={() => setActiveCity(city.value)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 whitespace-nowrap shrink-0 border ${isActive ? 'scale-105' : 'hover:bg-black/5 dark:hover:bg-white/5'}`}
+                style={{
+                  backgroundColor: isActive ? colors.primary : "transparent",
+                  color: isActive ? "white" : colors.text,
+                  borderColor: isActive ? "transparent" : colors.border,
+                }}
+              >
+                <span className="text-lg leading-none">{city.flag}</span>
+                <span>{city.english}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Mobile Metric Selector (Visible only on small screens) */}
+        <div
+          className="flex sm:hidden p-1 rounded-xl border"
+          style={{
+            backgroundColor: colors.backgroundElevated,
+            borderColor: colors.border
+          }}
+        >
+          {METRICS.map((metric) => {
+            const isActive = activeMetric === metric.value;
+            return (
+              <button
+                key={metric.value}
+                onClick={() => setActiveMetric(metric.value)}
+                className="flex-1 py-2 text-xs font-semibold rounded-lg transition-all duration-200"
+                style={{
+                  backgroundColor: isActive ? colors.card : "transparent",
+                  color: isActive ? colors.text : colors.textMuted,
+                  boxShadow: isActive ? colors.shadow : "none",
+                }}
+              >
+                {metric.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* CHART CONTAINER */}
-      <div
-        className="rounded-3xl border p-6 shadow-sm relative transition-all duration-300"
-        style={{
-          backgroundColor: colors.card,
-          borderColor: colors.border,
-          boxShadow: colors.shadow
-        }}
-      >
-        <div className="mb-6 flex items-center gap-2">
-          <div className="p-2 rounded-lg bg-primary/10">
-            <TrendingUp className="h-5 w-5" style={{ color: colors.primary }} />
-          </div>
-          <div>
-            <h3 className="font-bold text-lg" style={{ color: colors.text }}>Weekly {METRICS.find(m => m.value === activeMetric)?.label} Rate</h3>
-            <p className="text-xs" style={{ color: colors.textMuted }}>Last 7 weeks trend analysis</p>
-          </div>
-        </div>
+      <div className="h-[300px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={processedData} margin={{ top: 10, right: 0, bottom: 0, left: -20 }}>
+            <defs>
+              <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={colors.primary} stopOpacity={0.25} />
+                <stop offset="95%" stopColor={colors.primary} stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke={colors.border} opacity={0.4} vertical={false} />
 
-        <div className="h-[280px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={processedData} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
-              <defs>
-                <linearGradient id="colorTrend" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={colors.primary} stopOpacity={0.3} />
-                  <stop offset="95%" stopColor={colors.primary} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke={colors.border} opacity={0.4} vertical={false} />
+            <XAxis
+              dataKey="dateLabel"
+              stroke={colors.textMuted}
+              tick={{ fill: colors.textMuted, fontSize: 11 }}
+              tickLine={false}
+              axisLine={false}
+              dy={10}
+              minTickGap={30}
+            />
 
-              <XAxis
-                dataKey="dateLabel"
-                stroke={colors.textMuted}
-                tick={{ fill: colors.textMuted, fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-                dy={10}
-                minTickGap={20}
-              />
+            <YAxis
+              stroke={colors.textMuted}
+              tick={{ fill: colors.textMuted, fontSize: 11 }}
+              tickLine={false}
+              axisLine={false}
+              domain={trendDomain}
+              tickFormatter={(value) => value.toLocaleString()}
+              width={60}
+            />
 
-              <YAxis
-                stroke={colors.textMuted}
-                tick={{ fill: colors.textMuted, fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-                domain={trendDomain}
-                tickFormatter={(value) => value.toLocaleString()}
-                width={50}
-              />
+            <Tooltip
+              content={({ active, payload }) => {
+                if (active && payload && payload.length) {
+                  const data = payload[0].payload;
+                  return (
+                    <CustomTooltip
+                      active={active}
+                      colors={colors}
+                      label={data.fullDate}
+                      payload={[
+                        {
+                          name: METRICS.find(m => m.value === activeMetric)?.label || "Rate",
+                          value: data.value,
+                          color: colors.primary
+                        }
+                      ]}
+                    />
+                  );
+                }
+                return null;
+              }}
+            />
 
-              <Tooltip
-                content={({ active, payload }) => {
-                  if (active && payload && payload.length) {
-                    const data = payload[0].payload;
-                    return (
-                      <CustomTooltip
-                        active={active}
-                        colors={colors}
-                        label={`${data.fullDate}`}
-                        payload={[
-                          {
-                            name: `${METRICS.find(m => m.value === activeMetric)?.label}`,
-                            value: data.value,
-                            color: colors.primary
-                          }
-                        ]}
-                      />
-                    );
-                  }
-                  return null;
-                }}
-              />
-
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke={colors.primary}
-                strokeWidth={3}
-                fillOpacity={1}
-                fill="url(#colorTrend)"
-                animationDuration={1000}
-                activeDot={{ r: 6, strokeWidth: 0, fill: colors.primary }}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke={colors.primary}
+              strokeWidth={3}
+              fillOpacity={1}
+              fill="url(#trendGradient)"
+              animationDuration={1000}
+              activeDot={{
+                r: 6,
+                strokeWidth: 3,
+                fill: colors.card,
+                stroke: colors.primary
+              }}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

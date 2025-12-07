@@ -4,7 +4,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   try {
     const { city } = await params
 
-    const apiUrl = process.env.API_URL + "/api/cities/latest";
+    const apiUrl = process.env.API_URL + `/api/cities/${city}/highest`;
 
     const response = await fetch(apiUrl, {
       headers: {
