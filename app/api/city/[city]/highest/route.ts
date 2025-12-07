@@ -4,11 +4,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   try {
     const { city } = await params
 
-    console.log(`🔄 Fetching data for city: ${city}`)
-
-    // Fetch data from the external API with correct path
-    const apiUrl = `https://api.aryakurdo.com/api/city/${city}`
-    console.log(`📡 API URL: ${apiUrl}`)
+    const apiUrl = `https://api.aryakurdo.com/api/citiest/${city}/highest`
 
     const response = await fetch(apiUrl, {
       headers: {
@@ -18,11 +14,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       },
     })
 
-    console.log(`📊 API Response Status: ${response.status} ${response.statusText}`)
-
     if (!response.ok) {
       const errorText = await response.text().catch(() => "Unknown error")
-      console.error(`❌ API Error: ${response.status} - ${errorText}`)
 
       return NextResponse.json(
         {
@@ -35,20 +28,16 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const data = await response.json()
-    console.log(data)
-    console.log(`✅ Successfully fetched ${Array.isArray(data) ? data.length : "unknown"} records for ${city}`)
 
-    // Return the data with CORS headers
     return NextResponse.json(data, {
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Cache-Control": "public, max-age=60", // Cache for 1 minute
+        "Cache-Control": "public, max-age=3600", // Cache
       },
     })
   } catch (error) {
-    console.error("❌ Proxy API Error:", error)
 
     if (error instanceof Error && error.name === "TimeoutError") {
       return NextResponse.json({ error: "Request timeout: The API took too long to respond" }, { status: 408 })

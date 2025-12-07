@@ -26,6 +26,7 @@ import { CustomTooltip } from "@/components/ui/tooltip";
 import calculateDomain from "@/lib/calculate-domain";
 import CityRateComparison from "@/components/visualizations/city-comparison-chart";
 import { useCityComparisonData } from "@/hooks/visualizations/use-city-comparison-data";
+import CityTrendChart from "@/components/visualizations/city-trend-chart";
 
 export default function Visualizations() {
   const { colors, loading: themeLoading } = useTheme();
@@ -34,6 +35,17 @@ export default function Visualizations() {
   const cityComparisonData = useCityComparisonData();
 
   const hasPremiumAccess = user?.subscription === "gold" || user?.subscription === "platinum";
+
+  const distributionData = useMemo(
+    () => [
+      { name: "Baghdad", value: 35 },
+      { name: "Erbil", value: 25 },
+      { name: "Basra", value: 20 },
+      { name: "Sulaymaniyah", value: 15 },
+      { name: "Duhok", value: 5 },
+    ],
+    [],
+  );
 
   const trendData = useMemo(
     () => [
@@ -47,18 +59,6 @@ export default function Visualizations() {
     [],
   );
 
-  const distributionData = useMemo(
-    () => [
-      { name: "Baghdad", value: 35 },
-      { name: "Erbil", value: 25 },
-      { name: "Basra", value: 20 },
-      { name: "Sulaymaniyah", value: 15 },
-      { name: "Duhok", value: 5 },
-    ],
-    [],
-  );
-
-  const trendDomain = useMemo(() => calculateDomain(trendData, "rate"), [trendData])
   const volumeDomain = useMemo(() => calculateDomain(trendData, "volume"), [cityComparisonData])
 
   if (themeLoading || !colors) {
@@ -80,51 +80,14 @@ export default function Visualizations() {
       title: "City Rate Comparison",
       description: "Exchange rates across Iraqi cities",
       locked: false, // Free
-      component: (
-        CityRateComparison(cityComparisonData, colors)
-      ),
+      component: CityRateComparison(cityComparisonData, colors),
     },
     {
       id: "trend",
       title: "30-Day Trend",
       description: "Historical exchange rate movement",
       locked: false, // Free
-      component: (
-        <ResponsiveContainer width="100%" height={280}>
-          <AreaChart data={trendData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-            <defs>
-              <linearGradient id="colorRate" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={colors.primary} stopOpacity={0.4} />
-                <stop offset="95%" stopColor={colors.primary} stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke={colors.border} opacity={0.5} />
-            <XAxis
-              dataKey="date"
-              stroke={colors.textMuted}
-              tick={{ fill: colors.textMuted, fontSize: 12 }}
-              axisLine={{ stroke: colors.border }}
-            />
-            <YAxis
-              stroke={colors.textMuted}
-              tick={{ fill: colors.textMuted, fontSize: 12 }}
-              axisLine={{ stroke: colors.border }}
-              domain={trendDomain}
-              tickFormatter={(value) => value.toLocaleString()}
-            />
-            <Tooltip content={<CustomTooltip colors={colors} />} />
-            <Area
-              type="monotone"
-              dataKey="rate"
-              stroke={colors.primary}
-              strokeWidth={2}
-              fillOpacity={1}
-              fill="url(#colorRate)"
-              animationDuration={800}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      ),
+      component: <CityTrendChart colors />
     },
     {
       id: "volume",
@@ -240,7 +203,9 @@ export default function Visualizations() {
                   </div>
 
                   {/* Chart content */}
-                  <div className={isLocked ? "blur-xs pointer-events-none select-none" : ""}>{chart.component}</div>
+                  <div className={isLocked ? "blur-xs pointer-events-none select-none" : ""}>
+                    {chart.component}
+                  </div>
 
                   {isLocked && (
                     <div

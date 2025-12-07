@@ -3,17 +3,17 @@
 import { useState, useEffect } from "react";
 import { ExchangeRate, ExchangeRateApiProp } from "@/lib/interfaces";
 
-export function useCityComparisonData(): ExchangeRateApiProp {
+export function useCityComparisonData(city: string): ExchangeRateApiProp {
   const [cityData, setCityData] = useState<ExchangeRate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  async function fetchCityData() {
+  async function fetchCityTrendData(city: string) {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch("/api/city");
+      const response = await fetch(`/api/city/${city}/highest`);
 
       if (response.ok) {
         const data: ExchangeRate[] = await response.json();
@@ -33,9 +33,9 @@ export function useCityComparisonData(): ExchangeRateApiProp {
   }
 
   useEffect(() => {
-    fetchCityData()
+    fetchCityTrendData(city)
     const timeoutId = setTimeout(() => {
-      fetchCityData();
+      fetchCityTrendData(city);
     }, 15 * 3600);
     return () => clearTimeout(timeoutId);
   }, []);
@@ -44,6 +44,6 @@ export function useCityComparisonData(): ExchangeRateApiProp {
     cityData,
     loading,
     error,
-    fetchData: fetchCityData,
+    fetchData: fetchCityTrendData,
   }
 }

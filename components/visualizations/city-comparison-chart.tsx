@@ -19,7 +19,6 @@ type Props = ExchangeRateApiProp;
 
 export default function CityRateComparison({ cityData }: Props, colors: any) {
   const rateDomain = () => calculateDomain(cityData, "rate");
-  console.log("THIS IS THE CITY DATA", cityData);
 
   if (!colors) {
     return null;

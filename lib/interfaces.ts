@@ -11,5 +11,5 @@ export interface ExchangeRateApiProp {
   cityData: ExchangeRate[],
   loading: boolean,
   error: string | null,
-  fetchCityData: () => Promise<void>
+  fetchData: any
 }
