@@ -87,7 +87,7 @@ export default function Visualizations() {
       title: "30-Day Trend",
       description: "Historical exchange rate movement",
       locked: false, // Free
-      component: <CityTrendChart colors />
+      component: <CityTrendChart colors={colors} />
     },
     {
       id: "volume",
