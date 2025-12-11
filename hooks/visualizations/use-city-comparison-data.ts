@@ -44,6 +44,6 @@ export function useCityComparisonData(): ExchangeRateApiProp {
     cityData,
     loading,
     error,
-    fetchData: fetchCityData,
+    refetch: fetchCityData,
   }
 }

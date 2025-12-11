@@ -17,14 +17,8 @@ import { CustomTooltip } from "@/components/ui/tooltip";
 import { useTheme } from "@/lib/theme-context";
 import { useCityTrendData } from "@/hooks/visualizations/use-city-trend-data";
 import { cn } from "@/lib/utils";
-
-const CITIES = [
-  { value: "سلێمانی", label: "سلێمانی", english: "Sulaymaniyah", flag: "🏛️" },
-  { value: "هەولێر", label: "هەولێر", english: "Erbil", flag: "🏰" },
-  { value: "دهۆک", label: "دهۆک", english: "Duhok", flag: "🏔️" },
-  { value: "بغداد", label: "بغداد", english: "Baghdad", flag: "🕌" },
-  { value: "بصره", label: "البصرة", english: "Basra", flag: "🏖️" },
-];
+import { ExchangeRateApiProp } from "@/lib/interfaces";
+import { CITIES } from "@/lib/constants";
 
 const METRICS = [
   { value: "min_rate", label: "Low" },
@@ -39,7 +33,7 @@ export default function CityTrendChart({ colors: propColors }: { colors?: any })
   const [activeCity, setActiveCity] = useState(CITIES[0].value);
   const [activeMetric, setActiveMetric] = useState("average_rate");
 
-  const { cityData, loading, error, fetchData } = useCityTrendData(activeCity);
+  const { cityData, loading, error, refetch }: ExchangeRateApiProp = useCityTrendData(activeCity);
 
   const processedData = useMemo(() => {
     if (!cityData || cityData.length === 0) return [];
@@ -98,7 +92,7 @@ export default function CityTrendChart({ colors: propColors }: { colors?: any })
             <p className="text-sm" style={{ color: colors.textMuted }}>{error}</p>
           </div>
           <button
-            onClick={fetchData}
+            onClick={refetch}
             className="px-6 py-2 rounded-xl text-sm font-medium transition-transform hover:scale-105"
             style={{ backgroundColor: colors.primary, color: "white" }}
           >

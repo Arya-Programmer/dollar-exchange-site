@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
   LineChart,
   Line,
-  AreaChart,
-  Area,
   PieChart,
   Pie,
   Cell,
@@ -80,12 +78,12 @@ export default function Visualizations() {
       title: "City Rate Comparison",
       description: "Exchange rates across Iraqi cities",
       locked: false, // Free
-      component: CityRateComparison(cityComparisonData, colors),
+      component: <CityRateComparison colors={colors} />,
     },
     {
       id: "trend",
-      title: "30-Day Trend",
-      description: "Historical exchange rate movement",
+      title: "7-Week Trend",
+      description: "Historical exchange rate movement for the last 7 weeks",
       locked: false, // Free
       component: <CityTrendChart colors={colors} />
     },

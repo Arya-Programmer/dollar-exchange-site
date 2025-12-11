@@ -40,6 +40,6 @@ export function useCityTrendData(city: string): ExchangeRateApiProp {
     cityData,
     loading,
     error,
-    fetchData: () => fetchCityTrendData(city),
+    refetch: () => fetchCityTrendData(city),
   }
 }

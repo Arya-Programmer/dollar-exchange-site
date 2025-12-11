@@ -16,5 +16,12 @@ export interface ExchangeRateApiProp {
   cityData: ExchangeRate[],
   loading: boolean,
   error: string | null,
-  fetchData: any
+  refetch: any
+}
+
+export interface cities {
+  value: string,
+  label: string,
+  english: string,
+  flag: string
 }
