@@ -92,17 +92,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         headers: {
           "Content-Type": "application/json",
           "Cache-Control": "no-cache",
-          Pragma: "no-cache",
+          "Pragma": "no-cache",
         },
         credentials: "include",
         body: JSON.stringify({ email, password })
       })
 
+      const raw = await response.text();
+      console.log("AUTH CONT RAW: ", raw);
       if (response.ok) {
-        const user = await response.json();
-        setUser(user);
-        console.log("This is the response we got", user);
-        localStorage.setItem("user", JSON.stringify(user));
+        try {
+          const data = JSON.parse(raw);
+          setUser(data.user);
+          console.log("This is the response we got", data);
+          localStorage.setItem("access_token", data.access);
+          localStorage.setItem("refresh_token", data.refresh);
+          localStorage.setItem("user", JSON.stringify(data.user));
+        } catch (error) {
+          if (response) {
+            console.log("WE DIDN'T GET JSON", raw);
+          }
+        }
       }
     } catch (error) {
       console.warn("⚠️ Login failed due to error:", error);
@@ -114,6 +124,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
   }
 
   const openAuthModal = (mode: "signin" | "signup" = "signin") => {

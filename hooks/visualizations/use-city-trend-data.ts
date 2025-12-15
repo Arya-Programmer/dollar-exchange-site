@@ -13,7 +13,13 @@ export function useCityTrendData(city: string): ExchangeRateApiProp {
     setError(null);
 
     try {
-      const response = await fetch(`/api/city/${city}/highest`);
+      const response = await fetch(`/api/city/${city}/highest`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("access_token") || ""}`
+        },
+      });
 
       if (response.ok) {
         const data: ExchangeRate[] = await response.json();
@@ -40,6 +46,6 @@ export function useCityTrendData(city: string): ExchangeRateApiProp {
     cityData,
     loading,
     error,
-    refetch: () => fetchCityTrendData(city),
+    refetch: fetchCityTrendData,
   }
 }

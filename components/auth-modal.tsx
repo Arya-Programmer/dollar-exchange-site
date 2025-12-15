@@ -87,12 +87,13 @@ export function AuthModal({ isOpen, onClose, initialMode = "signin" }: AuthModal
 
     try {
       setLoading(true)
+      let data;
       if (mode === "signup") {
-        const data = await signup(email, password, confirmPassword)
-        if (data?.error) throw data;
+        data = await signup(email, password, confirmPassword)
       } else {
-        await signin(email, password)
+        data = await signin(email, password)
       }
+      if (data?.error) throw data;
       onClose()
     } catch (err: any) {
       console.log(err);

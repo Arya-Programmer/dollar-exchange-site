@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   AreaChart,
   Area,
@@ -61,6 +61,8 @@ export default function CityTrendChart({ colors: propColors }: { colors?: any })
     return [Math.floor(min - padding), Math.ceil(max + padding)];
   }, [cityData]);
 
+  useEffect(() => refetch, []);
+
   if (loading && processedData.length === 0) {
     return (
       <div
@@ -92,7 +94,7 @@ export default function CityTrendChart({ colors: propColors }: { colors?: any })
             <p className="text-sm" style={{ color: colors.textMuted }}>{error}</p>
           </div>
           <button
-            onClick={refetch}
+            onClick={() => { console.log("ACTIVE CITY: ", activeCity); refetch(activeCity); }}
             className="px-6 py-2 rounded-xl text-sm font-medium transition-transform hover:scale-105"
             style={{ backgroundColor: colors.primary, color: "white" }}
           >
