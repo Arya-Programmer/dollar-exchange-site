@@ -27,17 +27,16 @@ export function AuthModal({ isOpen, onClose, initialMode = "signin" }: AuthModal
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
-  const [error, setError] = useState("")
+  const [errors, setErrors] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
 
-  // Reset form when modal opens/closes
   useEffect(() => {
     if (isOpen) {
       setMode(initialMode)
       setEmail("")
       setPassword("")
       setConfirmPassword("")
-      setError("")
+      setErrors([])
     }
   }, [isOpen, initialMode])
 
@@ -60,24 +59,28 @@ export function AuthModal({ isOpen, onClose, initialMode = "signin" }: AuthModal
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError("")
+    setErrors([])
 
-    if (!email || !password) {
-      setError("Email and password are required")
+    if (!email) {
+      setErrors(prev => [...prev, "Email is required"]);
+      return
+    }
+    if (!password) {
+      setErrors(prev => [...prev, "Password is required"]);
       return
     }
 
     if (mode === "signup") {
       if (!confirmPassword) {
-        setError("Please confirm your password")
+        setErrors(prev => [...prev, "Please confirm your password"]);
         return
       }
       if (password !== confirmPassword) {
-        setError("Passwords do not match")
+        setErrors(prev => [...prev, "Passwords do not match"]);
         return
       }
       if (password.length < 6) {
-        setError("Password must be at least 6 characters")
+        setErrors(prev => [...prev, "Password must be at least 6 characters"]);
         return
       }
     }
@@ -85,13 +88,15 @@ export function AuthModal({ isOpen, onClose, initialMode = "signin" }: AuthModal
     try {
       setLoading(true)
       if (mode === "signup") {
-        await signup(email, password, "free")
+        const data = await signup(email, password, confirmPassword)
+        if (data?.error) throw data;
       } else {
         await signin(email, password)
       }
       onClose()
-    } catch (err) {
-      setError(mode === "signup" ? "Failed to create account" : "Failed to sign in")
+    } catch (err: any) {
+      console.log(err);
+      setErrors(err.error);;
     } finally {
       setLoading(false)
     }
@@ -99,7 +104,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "signin" }: AuthModal
 
   const switchMode = () => {
     setMode(mode === "signin" ? "signup" : "signin")
-    setError("")
+    setErrors([]);
     setPassword("")
     setConfirmPassword("")
   }
@@ -112,7 +117,23 @@ export function AuthModal({ isOpen, onClose, initialMode = "signin" }: AuthModal
         style={{ backgroundColor: `${colors.background}90` }}
         onClick={onClose}
       />
-
+      {/* Custom Scrollbar Styles - Adapted from CityTrendChart */}
+      <style jsx global>{`
+        .error-scrollbar::-webkit-scrollbar {
+          width: 4px; /* Thin vertical width */
+        }
+        .error-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .error-scrollbar::-webkit-scrollbar-thumb {
+          background-color: #ef4444; /* Tailwind red-500 */
+          border-radius: 9999px; /* Pill shape */
+        }
+        .error-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: #ef4444 transparent;
+        }
+      `}</style>
       {/* Modal */}
       <div
         className="relative z-10 w-full max-w-lg mx-4 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300"
@@ -161,7 +182,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "signin" }: AuthModal
           </div>
 
           {/* Form Section */}
-          <div className="p-8 md:w-3/5">
+          <div className="p-8 md:w-3/5 max-h-[90vh] overflow-y-hidden">
             <div className="mb-6">
               <h2 className="text-2xl font-bold" style={{ color: colors.text }}>
                 {mode === "signin" ? "Sign In" : "Create Account"}
@@ -228,15 +249,17 @@ export function AuthModal({ isOpen, onClose, initialMode = "signin" }: AuthModal
                 </div>
               )}
 
-              {error && (
-                <div
-                  className="flex items-center gap-2 p-3 rounded-xl"
-                  style={{ backgroundColor: `${colors.error}15` }}
-                >
-                  <AlertCircle className="h-4 w-4" style={{ color: colors.error }} />
-                  <p className="text-sm" style={{ color: colors.error }}>
-                    {error}
-                  </p>
+              {errors.length > 0 && (
+                <div className="flex flex-col gap-2 p-3 rounded-xl bg-red-500/10 text-red-500 max-h-[50px] overflow-y-auto error-scrollbar">
+                  {errors.map((error, index) => (
+                    <div key={index} className="flex items-start gap-2">
+                      {/* shrink-0 prevents the icon from squishing if text is long */}
+                      <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                      <p className="text-sm leading-tight">
+                        {error}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               )}
 

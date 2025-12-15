@@ -44,14 +44,14 @@ export const CitySelector = memo(function CitySelector({
           <button
             key={city.value}
             onClick={() => onCityChange(city.value)}
-            className={`p-4 rounded-2xl transition-all duration-300 hover:scale-105 ${
-              selectedCity === city.value ? "ring-2" : ""
-            }`}
+            className={`p-4 rounded-2xl transition-all duration-300 hover:scale-105 ${selectedCity === city.value ? "ring-1" : ""
+              }`}
             style={{
               backgroundColor: selectedCity === city.value ? colors.primary : colors.backgroundElevated,
               color: selectedCity === city.value ? "white" : colors.text,
               border: `1px solid ${colors.border}`,
-              ringColor: colors.primary,
+              // @ts-ignore - explicitly set the tailwind ring color variable
+              "--tw-ring-color": colors.border,
             }}
           >
             <div className="text-2xl mb-2">{city.flag}</div>
