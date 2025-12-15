@@ -96,7 +96,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "signin" }: AuthModal
       onClose()
     } catch (err: any) {
       console.log(err);
-      setErrors(err.error);;
+      setErrors(err.error || ["An unexpected error occurred"]);
     } finally {
       setLoading(false)
     }
@@ -110,7 +110,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "signin" }: AuthModal
   }
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center">
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-6">
       {/* Backdrop with blur */}
       <div
         className="absolute inset-0 backdrop-blur-md transition-all duration-300"
@@ -134,9 +134,10 @@ export function AuthModal({ isOpen, onClose, initialMode = "signin" }: AuthModal
           scrollbar-color: #ef4444 transparent;
         }
       `}</style>
-      {/* Modal */}
+
+      {/* Modal Container */}
       <div
-        className="relative z-10 w-full max-w-lg mx-4 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300"
+        className="relative z-10 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]"
         style={{
           backgroundColor: colors.card,
           border: `1px solid ${colors.border}`,
@@ -145,16 +146,16 @@ export function AuthModal({ isOpen, onClose, initialMode = "signin" }: AuthModal
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full transition-colors hover:opacity-70"
+          className="absolute top-4 right-4 p-2 rounded-full transition-colors hover:opacity-70 z-20"
           style={{ color: colors.textMuted }}
         >
           <X className="h-5 w-5" />
         </button>
 
-        <div className="flex flex-col md:flex-row">
-          {/* Benefits Section */}
+        <div className="flex flex-col md:flex-row h-full">
+          {/* Benefits Section - HIDDEN ON MOBILE (hidden md:block) */}
           <div
-            className="p-8 md:w-2/5"
+            className="hidden md:block p-8 md:w-2/5"
             style={{
               background: `linear-gradient(135deg, ${colors.primary}, ${colors.primary}dd)`,
             }}
@@ -181,8 +182,8 @@ export function AuthModal({ isOpen, onClose, initialMode = "signin" }: AuthModal
             </div>
           </div>
 
-          {/* Form Section */}
-          <div className="p-8 md:w-3/5 max-h-[90vh] overflow-y-hidden">
+          {/* Form Section - Full width on mobile */}
+          <div className="p-6 md:p-8 w-full md:w-3/5 overflow-y-auto">
             <div className="mb-6">
               <h2 className="text-2xl font-bold" style={{ color: colors.text }}>
                 {mode === "signin" ? "Sign In" : "Create Account"}
@@ -250,9 +251,9 @@ export function AuthModal({ isOpen, onClose, initialMode = "signin" }: AuthModal
               )}
 
               {errors.length > 0 && (
-                <div className="flex flex-col gap-2 p-3 rounded-xl bg-red-500/10 text-red-500 max-h-[50px] overflow-y-auto error-scrollbar">
+                <div className="flex flex-col gap-2 p-3 rounded-xl bg-red-500/10 text-red-500 max-h-[70px] overflow-y-auto error-scrollbar">
                   {errors.map((error, index) => (
-                    <div key={index} className="flex items-start gap-2">
+                    <div key={index} className="flex items-start gap-2 shrink-0">
                       {/* shrink-0 prevents the icon from squishing if text is long */}
                       <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
                       <p className="text-sm leading-tight">
