@@ -1,8 +1,7 @@
 "use client";
 
-import { useTheme } from "@/lib/theme-context";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useState, useMemo } from "react";
+
 import {
   LineChart,
   Line,
@@ -15,18 +14,25 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts"
-import { useState, useMemo } from "react";
-import { Navbar } from "@/components/dashboard-header";
-import { useAuth } from "@/lib/auth-context";
 import { Lock } from "lucide-react";
+
 import Link from "next/link";
-import { CustomTooltip } from "@/components/ui/tooltip";
-import calculateDomain from "@/lib/calculate-domain";
+
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Navbar } from "@/components/dashboard-header";
+import CustomTooltip from "@/components/ui/tooltip";
 import CityRateComparison from "@/components/visualizations/city-comparison-chart";
-import { useCityComparisonData } from "@/hooks/visualizations/use-city-comparison-data";
 import CityTrendChart from "@/components/visualizations/city-trend-chart";
 
-export default function Visualizations() {
+import { useTheme } from "@/lib/theme-context";
+import { useAuth } from "@/lib/auth-context";
+import { useCityComparisonData } from "@/hooks/visualizations/use-city-comparison-data";
+
+import calculateDomain from "@/lib/calculate-domain";
+
+
+function Visualizations() {
   const { colors, loading: themeLoading } = useTheme();
   const { user } = useAuth();
   const [selectedChart, setSelectedChart] = useState<string>("comparison");
@@ -269,3 +275,6 @@ export default function Visualizations() {
     </div>
   )
 }
+
+
+export default Visualizations;
