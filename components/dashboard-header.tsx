@@ -1,12 +1,18 @@
 "use client"
 
 import { memo, useEffect, useState } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+
 import { DollarSign, Menu, X } from "lucide-react"
-import { ThemeToggle } from "./theme-toggle"
+
+import Link from "next/link"
+
+import { usePathname } from "next/navigation"
+
 import { useAuth } from "@/lib/auth-context"
+
+import { ThemeToggle } from "./theme-toggle"
 import { AuthModal } from "./auth-modal"
+
 
 interface NavbarProps {
   colors: any
