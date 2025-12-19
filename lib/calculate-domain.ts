@@ -1,4 +1,4 @@
-export default function calculateDomain(data: any[], dataKey: string): [number, number] {
+export default function calculateDomain(data: any[], dataKey: string, extraPadding = 0): [number, number] {
   const values = data.map((d) => d[dataKey]).filter((v) => typeof v === "number")
   if (values.length === 0) return [0, 100]
 
@@ -7,7 +7,7 @@ export default function calculateDomain(data: any[], dataKey: string): [number, 
   const range = max - min
 
   // Add padding of 2x the range on each side for better visualization
-  const padding = range * 0.25
+  const padding = range * (0.25 + extraPadding)
   const domainMin = Math.floor((min - padding) / 5) * 5
   const domainMax = Math.ceil((max + padding) / 5) * 5
 

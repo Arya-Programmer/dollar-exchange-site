@@ -30,6 +30,8 @@ import { useAuth } from "@/lib/auth-context";
 import { useCityComparisonData } from "@/hooks/visualizations/use-city-comparison-data";
 
 import calculateDomain from "@/lib/calculate-domain";
+import CityRadarChart from "@/components/visualizations/city-radar-chart";
+import CityPieChart from "@/components/visualizations/city-pie-chart";
 
 
 function Visualizations() {
@@ -73,8 +75,6 @@ function Visualizations() {
       </div>
     )
   }
-
-  const chartColors = [colors.primary, "#ff6b6b", "#4ecdc4", "#45b7d1", "#96ceb4"]
 
   const charts = [
     {
@@ -133,36 +133,7 @@ function Visualizations() {
           </Link>
         ),
       },
-      component: (
-        <ResponsiveContainer width="100%" height={280}>
-          <LineChart data={cityComparisonData.cityData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={colors.border} opacity={0.5} />
-            <XAxis
-              dataKey="city"
-              stroke={colors.textMuted}
-              tick={{ fill: colors.textMuted, fontSize: 12 }}
-              axisLine={{ stroke: colors.border }}
-            />
-            <YAxis
-              stroke={colors.textMuted}
-              tick={{ fill: colors.textMuted, fontSize: 12 }}
-              axisLine={{ stroke: colors.border }}
-              domain={volumeDomain}
-              tickFormatter={(value) => value.toLocaleString()}
-            />
-            <Tooltip content={<CustomTooltip colors={colors} />} />
-            <Line
-              type="monotone"
-              dataKey="volume"
-              stroke={colors.primary}
-              strokeWidth={3}
-              dot={{ fill: colors.primary, strokeWidth: 2, r: 5 }}
-              activeDot={{ r: 8, stroke: colors.card, strokeWidth: 2 }}
-              animationDuration={800}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      ),
+      component: <CityRadarChart />,
     },
     {
       id: "distribution",
@@ -188,34 +159,8 @@ function Visualizations() {
           </Link>
         ),
       },
-      component: (
-        <ResponsiveContainer width="100%" height={280}>
-          <PieChart>
-            <Pie
-              data={distributionData}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              label={({ name, value }) => `${name} ${value}%`}
-              outerRadius={100}
-              innerRadius={40}
-              fill={colors.primary}
-              dataKey="value"
-              animationDuration={800}
-            >
-              {distributionData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={chartColors[index % chartColors.length]}
-                  stroke={colors.card}
-                  strokeWidth={2}
-                />
-              ))}
-            </Pie>
-            <Tooltip content={<CustomTooltip colors={colors} />} />
-          </PieChart>
-        </ResponsiveContainer>
-      ),
+      component: <CityPieChart />
+      ,
     },
   ]
 

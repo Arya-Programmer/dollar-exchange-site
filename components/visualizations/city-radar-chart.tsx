@@ -1,36 +1,53 @@
+"use client"
+
+import { useMemo } from "react"
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
+  Radar,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
   ResponsiveContainer,
+  Tooltip,
 } from "recharts"
 
 import { useTheme } from "@/lib/theme-context";
 import { useAuth } from "@/lib/auth-context";
 import { ExchangeRateApiProp } from "@/lib/interfaces";
 import { useCityComparisonData } from "@/hooks/visualizations/use-city-comparison-data";
-import { useMemo } from "react";
 import calculateDomain from "@/lib/calculate-domain";
 import Loading from "./loading";
 import Error from "./error";
 import CustomTooltip from "../ui/tooltip";
 
+const DUMMY_DATA = [
+  { city: "Baghdad", rate: 1520, fullMark: 1600 },
+  { city: "Erbil", rate: 1515, fullMark: 1600 },
+  { city: "Basra", rate: 1510, fullMark: 1600 },
+  { city: "Mosul", rate: 1525, fullMark: 1600 },
+  { city: "Kirkuk", rate: 1518, fullMark: 1600 },
+  { city: "Sulaymaniyah", rate: 1512, fullMark: 1600 },
+]
 
-function CityRadarChart() {
-  const { colors } = useTheme();
+export default function CityRadarChart({ colors: propColors }: { colors?: any }) {
+  const { colors: themeColors } = useTheme();
   const { user } = useAuth();
+  const colors = propColors || themeColors || {};
 
   const { cityData, loading, error, refetch }: ExchangeRateApiProp = useCityComparisonData();
 
   const dataToProcess = useMemo(() => {
-    return cityData || [];
-  }, [user, cityData]);
+    if (!user) return DUMMY_DATA
+    if (!cityData || cityData.length === 0) return []
+    const maxRate = Math.max(...cityData.map(d => d.rate)) * 1.05
+    return cityData.map(item => ({
+      ...item,
+      fullMark: maxRate
+    }))
+  }, [user, cityData])
 
   const rateDomain = useMemo(() => {
-    return calculateDomain(dataToProcess, "rate");
+    return calculateDomain(dataToProcess, "rate", 1);
   }, [dataToProcess]);
 
   if (!colors) return;
@@ -44,35 +61,33 @@ function CityRadarChart() {
   }
 
   return (
-    <ResponsiveContainer width="100%" height={280}>
-      <LineChart data={dataToProcess} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke={colors.border} opacity={0.5} />
-        <XAxis
-          dataKey="city"
-          stroke={colors.textMuted}
-          tick={{ fill: colors.textMuted, fontSize: 12 }}
-          axisLine={{ stroke: colors.border }}
-        />
-        <YAxis
-          stroke={colors.textMuted}
-          tick={{ fill: colors.textMuted, fontSize: 12 }}
-          axisLine={{ stroke: colors.border }}
-          domain={rateDomain}
-          tickFormatter={(value) => value.toLocaleString()}
-        />
-        <Tooltip content={<CustomTooltip colors={colors} />} />
-        <Line
-          type="monotone"
-          dataKey="volume"
-          stroke={colors.primary}
-          strokeWidth={3}
-          dot={{ fill: colors.primary, strokeWidth: 2, r: 5 }}
-          activeDot={{ r: 8, stroke: colors.card, strokeWidth: 2 }}
-          animationDuration={800}
-        />
-      </LineChart>
-    </ResponsiveContainer>
+    <div className="relative h-75 w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <RadarChart cx="50%" cy="50%" outerRadius="70%" data={dataToProcess}>
+          <PolarGrid stroke={colors.border} />
+          <PolarAngleAxis
+            dataKey="city"
+            tick={{ fill: colors.textMuted, fontSize: 11 }}
+          />
+          <PolarRadiusAxis
+            angle={30}
+            domain={rateDomain}
+            tick={{ fill: colors.textMuted, fontSize: 10 }}
+            axisLine={false}
+          />
+          <Radar
+            name="Exchange Rate"
+            dataKey="rate"
+            stroke={colors.primary}
+            fill={colors.primary}
+            fillOpacity={0.4}
+          />
+          <Tooltip
+            content={<CustomTooltip colors={colors} />}
+            cursor={{ stroke: colors.primary, strokeWidth: 1 }}
+          />
+        </RadarChart>
+      </ResponsiveContainer>
+    </div>
   )
 }
-
-export default CityRadarChart;
