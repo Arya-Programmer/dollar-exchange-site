@@ -63,7 +63,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const data = JSON.parse(raw);
           setUser(data.user);
           console.log("This is the response we got", data);
-          localStorage.setItem("token", JSON.stringify({ access: data.access, refresh: data.refresh }));
+          localStorage.setItem("access_token", data.access);
+          localStorage.setItem("refresh_token", data.refresh);
           localStorage.setItem("user", JSON.stringify(data.user));
         } catch (error) {
           if (response) {
@@ -122,6 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const logout = () => {
+    console.log("SOMEONE CALLED LOGOUT");
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("access_token");

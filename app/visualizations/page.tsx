@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 import {
   LineChart,
@@ -14,7 +14,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts"
-import { Lock } from "lucide-react";
+import { UserCheck, CircleStar } from "lucide-react";
 
 import Link from "next/link";
 
@@ -34,11 +34,9 @@ import calculateDomain from "@/lib/calculate-domain";
 
 function Visualizations() {
   const { colors, loading: themeLoading } = useTheme();
-  const { user } = useAuth();
+  const { user, openAuthModal } = useAuth();
   const [selectedChart, setSelectedChart] = useState<string>("comparison");
   const cityComparisonData = useCityComparisonData();
-
-  const hasPremiumAccess = user?.subscription === "gold" || user?.subscription === "platinum";
 
   const distributionData = useMemo(
     () => [
@@ -84,20 +82,57 @@ function Visualizations() {
       title: "City Rate Comparison",
       description: "Exchange rates across Iraqi cities",
       locked: false, // Free
-      component: <CityRateComparison colors={colors} />,
+      component: <CityRateComparison />,
     },
     {
       id: "trend",
       title: "7-Week Trend",
       description: "Historical exchange rate movement for the last 7 weeks",
-      locked: false, // Free
-      component: <CityTrendChart colors={colors} />
+      locked: {
+        check: user && user?.tier,
+        icon: <UserCheck size={32} style={{ color: colors.primary, position: "relative", left: 2 }} />,
+        requirement: "Login Required",
+        description: "Create a free account to access limited features",
+        button: (
+          <Button
+            className="rounded-xl px-6 py-2 font-medium transition-all duration-200"
+            style={{
+              backgroundColor: colors.primary,
+              color: "#ffffff",
+              cursor: "pointer",
+            }}
+            onClick={() => openAuthModal()}
+          >
+            Sign Up
+          </Button>
+        ),
+      },
+      component: <CityTrendChart />
     },
     {
       id: "volume",
       title: "Trading Volume",
       description: "Exchange volume by city",
-      locked: true, // Premium only
+      locked: {
+        check: user && (user?.tier === "gold" || user?.tier === "platinum"),
+        icon: <CircleStar size={32} style={{ color: colors.primary }} />,
+        requirement: "Gold Feature",
+        description: "Upgrade to Gold to access this visualization",
+        button: (
+          <Link href="/pricing">
+            <Button
+              className="rounded-xl px-6 py-2 font-medium transition-all duration-200"
+              style={{
+                backgroundColor: colors.primary,
+                color: "#ffffff",
+                cursor: "pointer",
+              }}
+            >
+              View Plans
+            </Button>
+          </Link>
+        ),
+      },
       component: (
         <ResponsiveContainer width="100%" height={280}>
           <LineChart data={cityComparisonData.cityData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
@@ -133,7 +168,26 @@ function Visualizations() {
       id: "distribution",
       title: "Market Distribution",
       description: "Rate distribution across cities",
-      locked: true, // Premium only
+      locked: {
+        check: user && user?.tier === "platinum",
+        icon: <CircleStar size={32} style={{ color: colors.primary }} />,
+        requirement: "Gold Feature",
+        description: "Upgrade to Gold to access this visualization",
+        button: (
+          <Link href="/pricing">
+            <Button
+              className="rounded-xl px-6 py-2 font-medium transition-all duration-200"
+              style={{
+                backgroundColor: colors.primary,
+                color: "#ffffff",
+                cursor: "pointer",
+              }}
+            >
+              View Plans
+            </Button>
+          </Link>
+        ),
+      },
       component: (
         <ResponsiveContainer width="100%" height={280}>
           <PieChart>
@@ -182,7 +236,7 @@ function Visualizations() {
           {/* Chart Grid */}
           <div className="grid md:grid-cols-2 gap-6">
             {charts.map((chart) => {
-              const isLocked = chart.locked && !hasPremiumAccess
+              const isLocked = chart.locked && !chart.locked.check
 
               return (
                 <Card
@@ -194,7 +248,6 @@ function Visualizations() {
                     backgroundColor: colors.card,
                     borderWidth: selectedChart === chart.id ? "2px" : "1px",
                     boxShadow: selectedChart === chart.id ? `0 8px 32px -8px ${colors.primary}40` : colors.shadow,
-                    cursor: isLocked ? "default" : "pointer",
                   }}
                 >
                   <div>
@@ -207,7 +260,7 @@ function Visualizations() {
                   </div>
 
                   {/* Chart content */}
-                  <div className={isLocked ? "blur-xs pointer-events-none select-none" : ""}>
+                  <div className={isLocked ? "blur-xs" : ""}>
                     {chart.component}
                   </div>
 
@@ -220,25 +273,15 @@ function Visualizations() {
                       }}
                     >
                       <div className="p-4 rounded-full mb-4" style={{ backgroundColor: `${colors.primary}20` }}>
-                        <Lock size={32} style={{ color: colors.primary }} />
+                        {chart.locked.icon}
                       </div>
                       <h4 className="text-lg font-bold mb-2" style={{ color: colors.text }}>
-                        Premium Feature
+                        {chart.locked.requirement}
                       </h4>
                       <p className="text-sm text-center mb-4 px-8" style={{ color: colors.textMuted }}>
-                        Upgrade to Gold or Platinum to access this visualization
+                        {chart.locked.description}
                       </p>
-                      <Link href="/pricing">
-                        <Button
-                          className="rounded-xl px-6 py-2 font-medium transition-all duration-200"
-                          style={{
-                            backgroundColor: colors.primary,
-                            color: "#ffffff",
-                          }}
-                        >
-                          View Plans
-                        </Button>
-                      </Link>
+                      {chart.locked.button}
                     </div>
                   )}
                 </Card>
