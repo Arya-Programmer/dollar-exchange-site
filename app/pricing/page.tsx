@@ -1,20 +1,22 @@
 "use client"
 
 import type React from "react"
-import { useTheme } from "@/lib/theme-context"
-import { useAuth } from "@/lib/auth-context"
-import { useRouter } from "next/navigation"
+import { useState } from "react"
+
+import { CheckCircle, Zap, Crown, Code } from "lucide-react"
+
 import Link from "next/link"
+
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { CheckCircle, Zap, Crown, Code } from "lucide-react"
-import { useState } from "react"
-import { Navbar } from "@/components/dashboard-header"
+import Navbar from "@/components/globals/navbar"
+
+import { useAuth } from "@/lib/auth-context"
+import { useTheme } from "@/lib/theme-context"
 
 export default function Pricing() {
   const { colors, loading: themeLoading } = useTheme()
-  const { user } = useAuth()
-  const router = useRouter()
+  const { user, openAuthModal } = useAuth()
   const [activeTab, setActiveTab] = useState<"user" | "api">("user")
   const [apiFormData, setApiFormData] = useState({ name: "", email: "", company: "", useCase: "" })
   const [submitted, setSubmitted] = useState(false)
@@ -31,21 +33,22 @@ export default function Pricing() {
     {
       name: "Free",
       icon: Zap,
-      price: "$0",
+      price: "0 IQD",
       period: "Forever",
       description: "Get started with essential features",
       features: [
         "Price updates every 2 hours",
-        "Current rates only",
         "No historical data",
-        "Iraqi cities only",
+        "All Iraqi cities",
+        "Current rates only",
         "Community support",
       ],
+      highlighted: user?.tier == "free" || false
     },
     {
       name: "Gold",
       icon: Crown,
-      price: "$9.99",
+      price: "1000 IQD",
       period: "/month",
       description: "Advanced tracking and insights",
       features: [
@@ -55,12 +58,12 @@ export default function Pricing() {
         "Rate change notifications",
         "Email support",
       ],
-      highlighted: true,
+      highlighted: user?.tier == "gold" || false
     },
     {
-      name: "Platinum",
+      name: "Premium",
       icon: Crown,
-      price: "$29.99",
+      price: "2500 IQD",
       period: "/month",
       description: "Professional-grade access",
       features: [
@@ -71,6 +74,7 @@ export default function Pricing() {
         "Priority support",
         "API access (limited)",
       ],
+      highlighted: user?.tier == "premium" || false
     },
   ]
 
@@ -82,7 +86,7 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: colors.background }}>
-      <Navbar colors={colors} />
+      <Navbar />
 
       <div className="py-12">
         <div className="max-w-7xl mx-auto px-6 space-y-12">
@@ -175,12 +179,12 @@ export default function Pricing() {
                         border: `1px solid ${colors.border}`,
                       }}
                       onClick={() => {
-                        if (!user) {
-                          router.push("/sign-up")
+                        if (!user && !tier.highlighted) {
+                          openAuthModal();
                         }
                       }}
                     >
-                      {user ? "Select Plan" : "Sign Up"}
+                      {user ? tier.highlighted ? "Current Plan" : "Select Plan" : "Sign Up"}
                     </button>
                   </Card>
                 )

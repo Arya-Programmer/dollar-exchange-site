@@ -28,14 +28,12 @@ interface CurrentRateCardProps {
     rateChange: number
     rateChangePercent: number
   }
-  colors: any
 }
 
-export const CurrentRateCard = memo(function CurrentRateCard({
+const CurrentRateCard = memo(function CurrentRateCard({
   latestRate,
   selectedCityInfo,
   rateCalculations,
-  colors,
 }: CurrentRateCardProps) {
   // Determine if we're showing the 5k (penji) or 25k (sur) note
   const is5k = latestRate.rate_type === "penji"
@@ -43,17 +41,17 @@ export const CurrentRateCard = memo(function CurrentRateCard({
   // Enhanced color schemes based on actual banknote colors
   const cardTheme = is5k
     ? {
-        primary: "#4a5d8a",
-        secondary: "#6b7db8",
-        accent: "#8a9dd4",
-        gradient: "linear-gradient(135deg, #3a4a7b 0%, #4a5d8a 25%, #5b6da5 50%, #6b7db8 75%, #7a8bc9 100%)",
-      }
+      primary: "#4a5d8a",
+      secondary: "#6b7db8",
+      accent: "#8a9dd4",
+      gradient: "linear-gradient(135deg, #3a4a7b 0%, #4a5d8a 25%, #5b6da5 50%, #6b7db8 75%, #7a8bc9 100%)",
+    }
     : {
-        primary: "#c93a54",
-        secondary: "#d85670",
-        accent: "#e7728c",
-        gradient: "linear-gradient(135deg, #b8334a 0%, #c93a54 25%, #d85670 50%, #e7728c 75%, #f68ea8 100%)",
-      }
+      primary: "#c93a54",
+      secondary: "#d85670",
+      accent: "#e7728c",
+      gradient: "linear-gradient(135deg, #b8334a 0%, #c93a54 25%, #d85670 50%, #e7728c 75%, #f68ea8 100%)",
+    }
 
   return (
     <div
@@ -170,9 +168,8 @@ export const CurrentRateCard = memo(function CurrentRateCard({
             {/* Change indicator */}
             <div className="text-right space-y-1">
               <div
-                className={`flex items-center gap-2 text-xl font-bold px-3 py-2 rounded-xl backdrop-blur-xs ${
-                  rateCalculations.rateChange >= 0 ? "text-green-100 bg-green-500/30" : "text-red-100 bg-red-500/30"
-                }`}
+                className={`flex items-center gap-2 text-xl font-bold px-3 py-2 rounded-xl backdrop-blur-xs ${rateCalculations.rateChange >= 0 ? "text-green-100 bg-green-500/30" : "text-red-100 bg-red-500/30"
+                  }`}
               >
                 {rateCalculations.rateChange >= 0 ? (
                   <TrendingUp className="h-6 w-6" />
@@ -201,3 +198,6 @@ export const CurrentRateCard = memo(function CurrentRateCard({
     </div>
   )
 })
+
+
+export default CurrentRateCard;

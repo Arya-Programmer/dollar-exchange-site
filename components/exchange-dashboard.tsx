@@ -1,29 +1,28 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+
+import { Download } from "lucide-react";
+
 import { useTheme } from "@/lib/theme-context";
 import { useExchangeData } from "@/hooks/use-exchange-data";
 import { useRateCalculations } from "@/hooks/use-rate-calculations";
 import { useChartData } from "@/hooks/use-chart-data";
 import { useCurrencyConverter } from "@/hooks/use-currency-converter";
 import { useRateTypeLoading } from "@/hooks/use-rate-type-loading";
-import { DashboardHeader } from "@/components/dashboard-header";
-import { CitySelector } from "@/components/city-selector";
-import { RateTypeSelector } from "@/components/rate-type-selector";
-import { CurrentRateCard } from "@/components/current-rate-card";
-import { ExchangeChart } from "@/components/exchange-chart";
-import { CurrencyConverter } from "@/components/currency-converter";
-import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
 
-// Static data - never changes, defined outside component
-const CITIES = [
-  { value: "سلێمانی", label: "سلێمانی", english: "Sulaymaniyah", flag: "🏛️" },
-  { value: "هەولێر", label: "هەولێر", english: "Erbil", flag: "🏰" },
-  { value: "دهۆک", label: "دهۆک", english: "Duhok", flag: "🏔️" },
-  { value: "بغداد", label: "بغداد", english: "Baghdad", flag: "🕌" },
-  { value: "بصره", label: "البصرة", english: "Basra", flag: "🏖️" },
-];
+import Navbar from "@/components/globals/navbar";
+import CitySelector from "@/components/dashboard/city-selector";
+import RateTypeSelector from "@/components/dashboard/rate-type-selector";
+import CurrentRateCard from "@/components/dashboard/current-rate-card";
+import ExchangeChart from "@/components/dashboard/exchange-chart";
+import CurrencyConverter from "@/components/dashboard/currency-converter";
+
+import { Button } from "@/components/ui/button";
+
+import { CITIES } from "@/lib/constants";
+import { DebugPanel } from "./globals/debug-panel";
+
 
 export default function ExchangeDashboard() {
   const { colors } = useTheme();
@@ -32,7 +31,6 @@ export default function ExchangeDashboard() {
     "penji",
   );
 
-  // Custom hooks for data management
   const { exchangeData, loading, error, refetch } = useExchangeData(
     selectedCity,
   );
@@ -80,21 +78,19 @@ export default function ExchangeDashboard() {
       className="min-h-screen transition-colors duration-300"
       style={{ backgroundColor: colors.background }}
     >
-      <DashboardHeader colors={colors} />
+      <DebugPanel />
+      <Navbar />
 
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
         <CitySelector
-          cities={CITIES}
           selectedCity={selectedCity}
           onCityChange={handleCityChange}
-          colors={colors}
         />
 
         <RateTypeSelector
           selectedRateType={selectedRateType}
           onRateTypeChange={handleRateTypeSelect}
           rateTypeLoading={rateTypeLoading}
-          colors={colors}
         />
 
         {latestRate && (
@@ -102,7 +98,6 @@ export default function ExchangeDashboard() {
             latestRate={latestRate}
             selectedCityInfo={selectedCityInfo}
             rateCalculations={rateCalculations}
-            colors={colors}
           />
         )}
 
@@ -115,7 +110,6 @@ export default function ExchangeDashboard() {
           selectedCityInfo={selectedCityInfo}
           selectedRateType={selectedRateType}
           onRetry={refetch}
-          colors={colors}
         />
         {/* Updated Export Button Design */}
         <div
@@ -131,7 +125,7 @@ export default function ExchangeDashboard() {
               Export Data
             </h3>
             <p className="text-sm" style={{ color: colors.textMuted }}>
-              Download the last 30 days of exchange rate history as a CSV file.
+              Download the last 3 days of exchange rate history as a CSV file.
             </p>
           </div>
 
@@ -171,7 +165,6 @@ export default function ExchangeDashboard() {
           onUsdChange={handleUsdChange}
           onIqdChange={handleIqdChange}
           rateCalculations={rateCalculations}
-          colors={colors}
         />
       </div>
     </div>

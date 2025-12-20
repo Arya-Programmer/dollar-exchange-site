@@ -3,28 +3,32 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/lib/theme-context"
-import {AuthProvider} from "@/lib/auth-context"
+import { AuthProvider } from "@/lib/auth-context"
+import { DebugPanel } from "@/components/globals/debug-panel"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-    title: "Iraqi Exchange Rates",
-    description: "Real-time currency exchange rates across Iraqi cities",
+  title: "Iraqi Exchange Rates",
+  description: "Real-time currency exchange rates across Iraqi cities",
 }
 
 export default function RootLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode
+  children: React.ReactNode
 }) {
-    return (
-        <html lang="en" suppressHydrationWarning>
-            <head>
-                <meta name="apple-mobile-web-app-title" content="Dollar Price" />
-            </head>
-            <body className={inter.className}>
-            <AuthProvider> <ThemeProvider>{children}</ThemeProvider> </AuthProvider>
-            </body>
-        </html>
-    )
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="apple-mobile-web-app-title" content="Dollar Price" />
+      </head>
+      <body className={inter.className}>
+        <AuthProvider> <ThemeProvider>
+          {children}
+          <DebugPanel />
+        </ThemeProvider> </AuthProvider>
+      </body>
+    </html>
+  )
 }

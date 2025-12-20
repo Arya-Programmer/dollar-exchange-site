@@ -2,27 +2,22 @@
 
 import { memo } from "react"
 import { MapPin } from "lucide-react"
-
-interface City {
-  value: string
-  label: string
-  english: string
-  flag: string
-}
+import { CITIES } from "@/lib/constants"
+import { useTheme } from "@/lib/theme-context"
 
 interface CitySelectorProps {
-  cities: City[]
   selectedCity: string
   onCityChange: (city: string) => void
-  colors: any
 }
 
-export const CitySelector = memo(function CitySelector({
-  cities,
+const CitySelector = memo(function CitySelector({
   selectedCity,
   onCityChange,
-  colors,
 }: CitySelectorProps) {
+  const { colors } = useTheme();
+
+  if (!colors) return;
+
   return (
     <div
       className="rounded-3xl p-8 transition-all duration-300 hover:scale-[1.02]"
@@ -40,7 +35,7 @@ export const CitySelector = memo(function CitySelector({
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {cities.map((city) => (
+        {CITIES.map((city) => (
           <button
             key={city.value}
             onClick={() => onCityChange(city.value)}
@@ -63,3 +58,6 @@ export const CitySelector = memo(function CitySelector({
     </div>
   )
 })
+
+
+export default CitySelector;

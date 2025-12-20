@@ -3,9 +3,16 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 
 export interface User {
-  id: string
-  email: string
-  subscription: "free" | "gold" | "platinum" | "api"
+  id: string;
+  last_login: Date;
+  first_name: string;
+  last_name: string;
+  date_joined: Date;
+  username: string | null;
+  email: string;
+  tier: "free" | "gold" | "premium" | "api"
+  date_of_birth: string | null;
+  bio: string;
 }
 
 interface AuthContextType {
@@ -14,6 +21,7 @@ interface AuthContextType {
   signup: (email: string, password: string, confirmPassword: string, subscription?: string) => Promise<void>
   signin: (email: string, password: string) => Promise<void>
   logout: () => void
+  updateProfile: (data: Partial<User>) => Promise<any>
   showAuthModal: boolean
   authModalMode: "signin" | "signup"
   openAuthModal: (mode?: "signin" | "signup") => void
@@ -36,8 +44,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch (e) {
         localStorage.removeItem("user")
       }
-      setLoading(false)
     }
+    setLoading(false);
   }, [])
 
   const signup = async (email: string, password: string, confirmPassword: string) => {
@@ -122,6 +130,55 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const updateProfile = async (data: Partial<User>) => {
+    try {
+      const prevUser = user;
+      setUser(prev => prev ? { ...prev, ...data } : null);
+
+      const token = localStorage.getItem("access_token");
+      const response = await fetch("api/auth/profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (response.status === 401 && user) {
+        logout();
+        openAuthModal("signin");
+        return { error: "Session expired. Please sign in again." }
+      }
+
+      const resData = await response.text();
+      if (response.ok) {
+        const updatedUser = JSON.parse(resData);
+
+        setUser(prev => {
+          const newState = { ...prev!, ...updatedUser };
+          localStorage.setItem("user", JSON.stringify(newState));
+          return newState;
+        });
+
+        return { success: true };
+      } else {
+        let errorData;
+        try {
+          errorData = JSON.parse(resData);
+        } catch (e) {
+          errorData = resData;
+        }
+        console.log("ERROR CORRUPT TOKEN ", errorData);
+        setUser(prevUser);
+        return { error: errorData.error || "Failed to update profile" };
+      }
+    } catch (error) {
+      console.error("Update profile error:", error);
+      return { error: "Network error occurred" };
+    }
+  }
+
   const logout = () => {
     console.log("SOMEONE CALLED LOGOUT");
     setUser(null);
@@ -146,6 +203,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading,
         signup,
         signin,
+        updateProfile,
         logout,
         showAuthModal,
         authModalMode,

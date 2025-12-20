@@ -1,8 +1,8 @@
 "use client"
 
-import { memo, useEffect, useState } from "react"
+import { memo, useState } from "react"
 
-import { DollarSign, Menu, X } from "lucide-react"
+import { DollarSign, Menu, X } from "lucide-react";
 
 import Link from "next/link"
 
@@ -10,24 +10,24 @@ import { usePathname } from "next/navigation"
 
 import { useAuth } from "@/lib/auth-context"
 
-import { ThemeToggle } from "./theme-toggle"
-import { AuthModal } from "./auth-modal"
-
-
-interface NavbarProps {
-  colors: any
-}
+import { ThemeToggle } from "@/components/globals/theme-toggle"
+import { AuthModal } from "@/components/globals/auth-modal"
+import { useTheme } from "@/lib/theme-context"
 
 const navLinks = [
-  { href: "/", label: "Dashboard" },
-  { href: "/pricing", label: "Pricing" },
+  { href: "/", label: "Exchange" },
+  { href: "/dashboard", label: "Dashboard" },
   { href: "/visualizations", label: "Visualizations" },
+  { href: "/pricing", label: "Pricing" },
 ]
 
-export const Navbar = memo(function Navbar({ colors }: NavbarProps) {
+const Navbar = memo(function Navbar() {
+  const { colors } = useTheme();
   const { user, logout, showAuthModal, authModalMode, openAuthModal, closeAuthModal } = useAuth()
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  if (!colors) return;
 
   return (
     <>
@@ -80,16 +80,18 @@ export const Navbar = memo(function Navbar({ colors }: NavbarProps) {
               <div className="hidden md:flex items-center gap-3">
                 {user ? (
                   <>
-                    <span
-                      className="text-sm px-3 py-2 rounded-xl"
-                      style={{
-                        color: colors.text,
-                        backgroundColor: colors.backgroundElevated,
-                        border: `1px solid ${colors.border}`,
-                      }}
-                    >
-                      {user.email}
-                    </span>
+                    <Link href="/profile">
+                      <span
+                        className="text-sm px-3 py-2 rounded-xl"
+                        style={{
+                          color: colors.text,
+                          backgroundColor: colors.backgroundElevated,
+                          border: `1px solid ${colors.border}`,
+                        }}
+                      >
+                        {user.first_name + " " + user.last_name || user.email}
+                      </span>
+                    </Link>
                     <button
                       onClick={logout}
                       className="px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-105"
@@ -181,7 +183,7 @@ export const Navbar = memo(function Navbar({ colors }: NavbarProps) {
             <div className="pt-4 border-t" style={{ borderColor: colors.border }}>
               {user ? (
                 <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-3 px-2">
+                  <Link href="/profile" className="flex items-center gap-3 px-2">
                     <div
                       className="h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
                       style={{ backgroundColor: colors.primary }}
@@ -189,9 +191,9 @@ export const Navbar = memo(function Navbar({ colors }: NavbarProps) {
                       {user.email.charAt(0).toUpperCase()}
                     </div>
                     <span className="text-sm font-medium truncate" style={{ color: colors.text }}>
-                      {user.email}
+                      {user.first_name + " " + user.last_name || user.email}
                     </span>
-                  </div>
+                  </Link>
                   <button
                     onClick={() => {
                       logout()
@@ -248,4 +250,4 @@ export const Navbar = memo(function Navbar({ colors }: NavbarProps) {
   )
 })
 
-export const DashboardHeader = Navbar
+export default Navbar
