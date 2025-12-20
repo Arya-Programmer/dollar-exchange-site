@@ -1,15 +1,7 @@
 "use client"
 
+import { ExchangeRate } from "@/lib/interfaces"
 import { useMemo } from "react"
-
-interface ExchangeRate {
-  id: number
-  city: string
-  rate_type: string
-  rate: number
-  timestamp: string
-  message_id?: number
-}
 
 export function useRateCalculations(exchangeData: ExchangeRate[], selectedRateType: "sur" | "penji") {
   // Memoize: Filter and sort data for selected rate type

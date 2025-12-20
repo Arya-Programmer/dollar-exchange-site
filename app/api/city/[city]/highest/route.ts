@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server"
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ city: string }> }) {
@@ -6,13 +7,19 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     const apiUrl = process.env.API_URL + `/api/cities/${city}/highest`;
 
+    console.log("We reach here", city)
+    console.log("HIGHEST-PAYLOAD", request.headers);
+    const authorization = request.headers.get('authorization');
+
     const response = await fetch(apiUrl, {
+      method: "GET",
       headers: {
-        Accept: "application/json",
+        "Accept": "application/json",
         "Content-Type": "application/json",
         "User-Agent": "Iraqi-Exchange-Dashboard/1.0",
+        "Authorization": authorization
       },
-    })
+    });
 
     if (!response.ok) {
       const errorText = await response.text().catch(() => "Unknown error")
@@ -38,7 +45,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       },
     })
   } catch (error) {
-
+    console.log(error);
     if (error instanceof Error && error.name === "TimeoutError") {
       return NextResponse.json({ error: "Request timeout: The API took too long to respond" }, { status: 408 })
     }

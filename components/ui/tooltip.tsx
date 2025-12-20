@@ -1,16 +1,11 @@
-import * as React from "react";
-
-function CustomTooltip({
-  active,
-  payload,
-  label,
-  colors,
-}: {
+type props = {
   active?: boolean
   payload?: any[]
   label?: string
   colors: any
-}) {
+}
+
+function CustomTooltip({ active, payload, label, colors }: props) {
   if (!active || !payload || !payload.length) return null;
 
   return (
@@ -34,4 +29,4 @@ function CustomTooltip({
   );
 }
 
-export { CustomTooltip }
+export default CustomTooltip;
