@@ -19,9 +19,10 @@ interface NavbarProps {
 }
 
 const navLinks = [
-  { href: "/", label: "Dashboard" },
-  { href: "/pricing", label: "Pricing" },
+  { href: "/", label: "Exchange" },
+  { href: "/dashboard", label: "Dashboard" },
   { href: "/visualizations", label: "Visualizations" },
+  { href: "/pricing", label: "Pricing" },
 ]
 
 export const Navbar = memo(function Navbar({ colors }: NavbarProps) {
@@ -80,16 +81,18 @@ export const Navbar = memo(function Navbar({ colors }: NavbarProps) {
               <div className="hidden md:flex items-center gap-3">
                 {user ? (
                   <>
-                    <span
-                      className="text-sm px-3 py-2 rounded-xl"
-                      style={{
-                        color: colors.text,
-                        backgroundColor: colors.backgroundElevated,
-                        border: `1px solid ${colors.border}`,
-                      }}
-                    >
-                      {user.email}
-                    </span>
+                    <Link href="/profile">
+                      <span
+                        className="text-sm px-3 py-2 rounded-xl"
+                        style={{
+                          color: colors.text,
+                          backgroundColor: colors.backgroundElevated,
+                          border: `1px solid ${colors.border}`,
+                        }}
+                      >
+                        {user.email}
+                      </span>
+                    </Link>
                     <button
                       onClick={logout}
                       className="px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-105"

@@ -10,13 +10,13 @@ import { Zap, Crown, TrendingUp, Clock, BarChart3 } from "lucide-react"
 import { useEffect } from "react"
 
 export default function Dashboard() {
-  const { user, loading } = useAuth()
+  const { user, loading, openAuthModal } = useAuth()
   const { colors, loading: themeLoading } = useTheme()
   const router = useRouter()
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push("/sign-in")
+      openAuthModal();
     }
   }, [user, loading, router])
 
@@ -41,7 +41,7 @@ export default function Dashboard() {
       cities: "All",
       support: "Email",
     },
-    platinum: {
+    premium: {
       updateFrequency: "Real-time",
       historicalData: "Unlimited",
       cities: "All",
@@ -56,7 +56,7 @@ export default function Dashboard() {
   }
 
   const benefits =
-    subscriptionBenefits[user.subscription as keyof typeof subscriptionBenefits] || subscriptionBenefits.free
+    subscriptionBenefits[user.tier as keyof typeof subscriptionBenefits] || subscriptionBenefits.free
 
   return (
     <div className="min-h-screen pt-20 pb-12" style={{ backgroundColor: colors.background }}>
@@ -84,7 +84,7 @@ export default function Dashboard() {
                 Current Subscription
               </p>
               <h2 className="text-3xl font-bold capitalize" style={{ color: colors.text }}>
-                {user.subscription}
+                {user.tier}
               </h2>
             </div>
             <Link href="/pricing">
@@ -93,6 +93,7 @@ export default function Dashboard() {
                 style={{
                   backgroundColor: colors.primary,
                   color: "white",
+                  cursor: "pointer"
                 }}
               >
                 Manage Plan

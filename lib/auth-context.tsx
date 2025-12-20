@@ -3,9 +3,16 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 
 export interface User {
-  id: string
-  email: string
-  subscription: "free" | "gold" | "platinum" | "api"
+  id: string;
+  last_login: Date;
+  first_name: string;
+  last_name: string;
+  date_joined: Date;
+  username: string | null;
+  email: string;
+  tier: "free" | "gold" | "premium" | "api"
+  date_of_birth: string | null;
+  bio: string;
 }
 
 interface AuthContextType {
