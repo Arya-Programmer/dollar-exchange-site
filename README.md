@@ -36,31 +36,31 @@ A modern, real-time currency exchange rate dashboard for Iraqi cities, featuring
 ### Installation
 
 1. **Clone the repository**
-   ```bash
+   \`\`\`bash
    git clone https://github.com/your-username/iraqi-exchange-dashboard.git
    cd iraqi-exchange-dashboard
-   ```
+   \`\`\`
 
 2. **Install dependencies**
-   ```bash
+   \`\`\`bash
    npm install
    # or
    yarn install
-   ```
+   \`\`\`
 
 3. **Start development server**
-   ```bash
+   \`\`\`bash
    npm run dev
    # or
    yarn dev
-   ```
+   \`\`\`
 
 4. **Open in browser**
-   Navigate to `http://localhost:3000`
+   Navigate to \`http://localhost:3000\`
 
 ## 🏗️ Project Structure
 
-```
+\`\`\`
 ├── app/                    # Next.js App Router
 │   ├── api/               # API routes and proxies
 │   ├── layout.tsx         # Root layout with theme provider
@@ -83,7 +83,7 @@ A modern, real-time currency exchange rate dashboard for Iraqi cities, featuring
 │   └── theme-context.tsx  # Theme management system
 └── public/               # Static assets
     └── images/           # Banknote images
-```
+\`\`\`
 
 ## 🎨 Design System
 
@@ -105,13 +105,13 @@ A modern, real-time currency exchange rate dashboard for Iraqi cities, featuring
 ## 🔌 API Integration
 
 ### Data Source
-- **Primary API**: `api.aryakurdo.com`
+- **Primary API**: \`api.aryakurdo.com\`
 - **Proxy Routes**: Next.js API routes for CORS handling
 - **Fallback System**: Graceful degradation with error states
 
 ### Endpoints
-- `/api/city/[city]` - Exchange rates for specific city
-- `/api/styles` - Dynamic theme configuration
+- \`/api/city/[city]\` - Exchange rates for specific city
+- \`/api/styles\` - Dynamic theme configuration
 
 ### Rate Types
 - **Penji**: 5,000 IQD denomination rates
@@ -120,13 +120,13 @@ A modern, real-time currency exchange rate dashboard for Iraqi cities, featuring
 ## 🛠️ Development
 
 ### Available Scripts
-```bash
+\`\`\`bash
 npm run dev          # Start development server
 npm run build        # Build for production
 npm run start        # Start production server
 npm run lint         # Run ESLint
 npm run type-check   # TypeScript type checking
-```
+\`\`\`
 
 ### Code Quality
 - **ESLint**: Code linting and formatting
@@ -154,13 +154,13 @@ npm run type-check   # TypeScript type checking
 ## 🔧 Configuration
 
 ### Environment Variables
-```env
+\`\`\`env
 # Optional: Custom API endpoints
 NEXT_PUBLIC_API_BASE_URL=https://api.aryakurdo.com
-```
+\`\`\`
 
 ### Theme Customization
-Modify `lib/theme-context.tsx` to customize:
+Modify \`lib/theme-context.tsx\` to customize:
 - Color schemes
 - Gradient definitions
 - Animation timings
@@ -169,9 +169,9 @@ Modify `lib/theme-context.tsx` to customize:
 ## 🤝 Contributing
 
 1. **Fork the repository**
-2. **Create feature branch** (`git checkout -b feature/amazing-feature`)
-3. **Commit changes** (`git commit -m 'Add amazing feature'`)
-4. **Push to branch** (`git push origin feature/amazing-feature`)
+2. **Create feature branch** (\`git checkout -b feature/amazing-feature\`)
+3. **Commit changes** (\`git commit -m 'Add amazing feature'\`)
+4. **Push to branch** (\`git push origin feature/amazing-feature\`)
 5. **Open Pull Request**
 
 ### Development Guidelines
@@ -194,12 +194,12 @@ Modify `lib/theme-context.tsx` to customize:
 ### Common Issues
 
 **App doesn't load in regular browser but works in incognito:**
-```bash
+\`\`\`bash
 # Clear browser storage
 localStorage.clear()
 sessionStorage.clear()
 location.reload()
-```
+\`\`\`
 
 **Theme not loading:**
 - Check browser console for API errors
@@ -241,12 +241,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Issues**: [GitHub Issues](https://github.com/your-username/iraqi-exchange-dashboard/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/your-username/iraqi-exchange-dashboard/discussions)
-- **Email**: aryakurdo@gmail.com
+- **Email**: your-email@example.com
 
 ---
 
 **Built with ❤️ for the Iraqi financial community**
 
-```
-Last updated: 7/3/2025
-```
+*Last updated: $(date)*
+\`\`\`
