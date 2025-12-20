@@ -114,7 +114,7 @@ function Visualizations() {
       title: "Trading Volume",
       description: "Exchange volume by city",
       locked: {
-        check: user && (user?.tier === "gold" || user?.tier === "platinum"),
+        check: user && (user?.tier === "gold" || user?.tier === "premium"),
         icon: <CircleStar size={32} style={{ color: colors.primary }} />,
         requirement: "Gold Feature",
         description: "Upgrade to Gold to access this visualization",
@@ -140,7 +140,7 @@ function Visualizations() {
       title: "Market Distribution",
       description: "Rate distribution across cities",
       locked: {
-        check: user && user?.tier === "platinum",
+        check: user && user?.tier === "premium",
         icon: <CircleStar size={32} style={{ color: colors.primary }} />,
         requirement: "Gold Feature",
         description: "Upgrade to Gold to access this visualization",
@@ -235,12 +235,11 @@ function Visualizations() {
           </div>
 
           {/* Statistics Cards */}
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             {[
-              { value: "1,408", label: "Current Rate" },
-              { value: "+0.04%", label: "Today Change" },
-              { value: "5", label: "Cities Tracked" },
-              { value: "30", label: "Days History" },
+              { value: "4", label: "Visualizations" },
+              { value: "5-6", label: "Cities Tracked" },
+              { value: Math.round(((new Date()).getTime() - (new Date("2024-01-01")).getTime()) / (1000 * 60 * 60 * 24)), label: "Days History" },
             ].map((stat) => (
               <Card
                 key={stat.label}

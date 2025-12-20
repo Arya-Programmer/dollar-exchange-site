@@ -11,7 +11,7 @@ import { DashboardHeader } from "@/components/dashboard-header";
 import { CitySelector } from "@/components/city-selector";
 import { RateTypeSelector } from "@/components/rate-type-selector";
 import { CurrentRateCard } from "@/components/current-rate-card";
-import { ExchangeChart } from "@/components/exchange-chart";
+import ExchangeChart from "@/components/exchange-chart";
 import { CurrencyConverter } from "@/components/currency-converter";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
