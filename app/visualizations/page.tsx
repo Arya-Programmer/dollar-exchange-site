@@ -20,7 +20,7 @@ import Link from "next/link";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Navbar } from "@/components/dashboard-header";
+import Navbar from "@/components/globals/navbar";
 import CustomTooltip from "@/components/ui/tooltip";
 import CityRateComparison from "@/components/visualizations/city-comparison-chart";
 import CityTrendChart from "@/components/visualizations/city-trend-chart";

@@ -2,6 +2,7 @@
 
 import { memo } from "react"
 import { ArrowUpDown } from "lucide-react"
+import { useTheme } from "@/lib/theme-context"
 
 interface ExchangeRate {
   id: number
@@ -23,18 +24,19 @@ interface CurrencyConverterProps {
     rateChange: number
     rateChangePercent: number
   }
-  colors: any
 }
 
-export const CurrencyConverter = memo(function CurrencyConverter({
+const CurrencyConverter = memo(function CurrencyConverter({
   latestRate,
   usdAmount,
   iqdAmount,
   onUsdChange,
   onIqdChange,
   rateCalculations,
-  colors,
 }: CurrencyConverterProps) {
+  const { colors } = useTheme();
+
+  if (!colors) return;
   return (
     <div
       className="rounded-3xl p-8 transition-all duration-300"
@@ -135,3 +137,6 @@ export const CurrencyConverter = memo(function CurrencyConverter({
     </div>
   )
 })
+
+
+export default CurrencyConverter;

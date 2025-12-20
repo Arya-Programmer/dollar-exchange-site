@@ -1,20 +1,23 @@
 "use client"
 
+import { useTheme } from "@/lib/theme-context"
 import { memo } from "react"
 
 interface RateTypeSelectorProps {
   selectedRateType: "sur" | "penji"
   onRateTypeChange: (rateType: "sur" | "penji") => void
   rateTypeLoading: boolean
-  colors: any
 }
 
-export const RateTypeSelector = memo(function RateTypeSelector({
+const RateTypeSelector = memo(function RateTypeSelector({
   selectedRateType,
   onRateTypeChange,
   rateTypeLoading,
-  colors,
 }: RateTypeSelectorProps) {
+  const { colors } = useTheme();
+
+  if (!colors) return;
+
   return (
     <div
       className="rounded-3xl p-6 transition-all duration-300"
@@ -50,9 +53,8 @@ export const RateTypeSelector = memo(function RateTypeSelector({
           <button
             onClick={() => onRateTypeChange("penji")}
             disabled={rateTypeLoading}
-            className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
-              selectedRateType === "penji" ? "text-white" : ""
-            }`}
+            className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${selectedRateType === "penji" ? "text-white" : ""
+              }`}
             style={{
               backgroundColor: selectedRateType === "penji" ? "#4a5d8a" : "transparent",
               color: selectedRateType === "penji" ? "white" : colors.text,
@@ -63,9 +65,8 @@ export const RateTypeSelector = memo(function RateTypeSelector({
           <button
             onClick={() => onRateTypeChange("sur")}
             disabled={rateTypeLoading}
-            className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
-              selectedRateType === "sur" ? "text-white" : ""
-            }`}
+            className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${selectedRateType === "sur" ? "text-white" : ""
+              }`}
             style={{
               backgroundColor: selectedRateType === "sur" ? "#c93a54" : "transparent",
               color: selectedRateType === "sur" ? "white" : colors.text,
@@ -77,4 +78,7 @@ export const RateTypeSelector = memo(function RateTypeSelector({
       </div>
     </div>
   )
-})
+});
+
+
+export default RateTypeSelector;

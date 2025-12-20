@@ -36,7 +36,6 @@ interface ExchangeChartProps {
   selectedCityInfo: any
   selectedRateType: string
   onRetry: () => void
-  colors: any
 }
 
 function ExchangeChart({
@@ -48,11 +47,11 @@ function ExchangeChart({
   selectedCityInfo,
   selectedRateType,
   onRetry,
-  colors: propColors,
 }: ExchangeChartProps) {
-  const { colors: themeColors } = useTheme();
+  const { colors } = useTheme();
   const { user } = useAuth();
-  const colors = propColors || themeColors || {};
+
+  if (!colors) return;
 
   const renderContent = () => {
     if (loading || rateTypeLoading) {

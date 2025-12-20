@@ -1,8 +1,8 @@
 "use client"
 
-import { memo, useEffect, useState } from "react"
+import { memo, useState } from "react"
 
-import { DollarSign, Menu, X } from "lucide-react"
+import { DollarSign, Menu, X } from "lucide-react";
 
 import Link from "next/link"
 
@@ -10,13 +10,9 @@ import { usePathname } from "next/navigation"
 
 import { useAuth } from "@/lib/auth-context"
 
-import { ThemeToggle } from "./theme-toggle"
-import { AuthModal } from "./auth-modal"
-
-
-interface NavbarProps {
-  colors: any
-}
+import { ThemeToggle } from "@/components/globals/theme-toggle"
+import { AuthModal } from "@/components/globals/auth-modal"
+import { useTheme } from "@/lib/theme-context"
 
 const navLinks = [
   { href: "/", label: "Exchange" },
@@ -25,10 +21,13 @@ const navLinks = [
   { href: "/pricing", label: "Pricing" },
 ]
 
-export const Navbar = memo(function Navbar({ colors }: NavbarProps) {
+const Navbar = memo(function Navbar() {
+  const { colors } = useTheme();
   const { user, logout, showAuthModal, authModalMode, openAuthModal, closeAuthModal } = useAuth()
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  if (!colors) return;
 
   return (
     <>
@@ -251,4 +250,4 @@ export const Navbar = memo(function Navbar({ colors }: NavbarProps) {
   )
 })
 
-export const DashboardHeader = Navbar
+export default Navbar

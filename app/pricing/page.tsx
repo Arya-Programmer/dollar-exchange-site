@@ -9,12 +9,11 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { CheckCircle, Zap, Crown, Code } from "lucide-react"
 import { useState } from "react"
-import { Navbar } from "@/components/dashboard-header"
+import Navbar from "@/components/globals/navbar"
 
 export default function Pricing() {
   const { colors, loading: themeLoading } = useTheme()
-  const { user } = useAuth()
-  const router = useRouter()
+  const { user, openAuthModal } = useAuth()
   const [activeTab, setActiveTab] = useState<"user" | "api">("user")
   const [apiFormData, setApiFormData] = useState({ name: "", email: "", company: "", useCase: "" })
   const [submitted, setSubmitted] = useState(false)
@@ -41,11 +40,12 @@ export default function Pricing() {
         "Iraqi cities only",
         "Community support",
       ],
+      highlighted: user?.tier == "free" || false
     },
     {
       name: "Gold",
       icon: Crown,
-      price: "$9.99",
+      price: "$2.99",
       period: "/month",
       description: "Advanced tracking and insights",
       features: [
@@ -55,12 +55,12 @@ export default function Pricing() {
         "Rate change notifications",
         "Email support",
       ],
-      highlighted: true,
+      highlighted: user?.tier == "gold" || false
     },
     {
-      name: "Platinum",
+      name: "Premium",
       icon: Crown,
-      price: "$29.99",
+      price: "$5.99",
       period: "/month",
       description: "Professional-grade access",
       features: [
@@ -71,6 +71,7 @@ export default function Pricing() {
         "Priority support",
         "API access (limited)",
       ],
+      highlighted: user?.tier == "premium" || false
     },
   ]
 
@@ -82,7 +83,7 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: colors.background }}>
-      <Navbar colors={colors} />
+      <Navbar />
 
       <div className="py-12">
         <div className="max-w-7xl mx-auto px-6 space-y-12">
@@ -176,7 +177,7 @@ export default function Pricing() {
                       }}
                       onClick={() => {
                         if (!user) {
-                          router.push("/sign-up")
+                          openAuthModal();
                         }
                       }}
                     >
