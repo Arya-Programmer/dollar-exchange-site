@@ -1,12 +1,7 @@
 import nextPwa from 'next-pwa';
 import type { NextConfig } from 'next';
 
-const withPWA = nextPwa({
-  dest: 'public',
-  register: true,
-  skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development',   // handy during dev
-});
+const isDev = process.env.NODE_ENV === 'development';
 
 const nextConfig: NextConfig = {
   eslint: {
@@ -16,8 +11,22 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true
   },
   images: {
-    unoptimized: false
+    // Merged from your deleted .mjs file to ensure images load
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'blob.v0.dev',
+      },
+    ],
   },
 };
 
-export default withPWA(nextConfig);
+const withPWA = nextPwa({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: isDev,
+});
+
+export default isDev ? nextConfig : withPWA(nextConfig);

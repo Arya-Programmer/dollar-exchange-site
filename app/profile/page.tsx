@@ -43,10 +43,23 @@ export default function Dashboard() {
   }, [user, loading, router])
 
   const handleSave = async () => {
+    if (!user) return;
     setIsSaving(true);
-    const result = await updateProfile(formData);
+    const toUpdate = {}
+    Object.keys(formData).forEach(item => {
+      // @ts-ignore
+      if (user[item] !== formData[item]) {
+        // @ts-ignore
+        toUpdate[item] = formData[item];
+      }
+    });
+    let result;
+    if (toUpdate) {
+      result = await updateProfile(toUpdate);
+    }
     setIsSaving(false);
-    if (result.success || !result.error) {
+
+    if (result?.success || !result?.error) {
       setIsEditing(false);
     }
   }
@@ -275,17 +288,20 @@ export default function Dashboard() {
                     {user.tier === 'premium' && <Zap className="h-8 w-8 text-blue-500 fill-blue-500" />}
                   </h2>
                 </div>
-                <Link href="/pricing">
-                  <Button
-                    className="rounded-xl px-6 font-medium shadow-lg hover:opacity-90 transition-all"
-                    style={{
-                      backgroundColor: colors.primary,
-                      color: "white",
-                    }}
-                  >
-                    Upgrade Plan
-                  </Button>
-                </Link>
+                {
+                  user.tier !== "premium" &&
+                  <Link href="/pricing">
+                    <Button
+                      className="rounded-xl px-6 font-medium shadow-lg hover:opacity-90 transition-all"
+                      style={{
+                        backgroundColor: colors.primary,
+                        color: "white",
+                      }}
+                    >
+                      Upgrade Plan
+                    </Button>
+                  </Link>
+                }
               </div>
 
               {/* Quick Stats Mini-Grid */}

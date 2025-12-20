@@ -17,7 +17,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         "Accept": "application/json",
         "Content-Type": "application/json",
         "User-Agent": "Iraqi-Exchange-Dashboard/1.0",
-        "Authorization": authorization
+        "Authorization": authorization || ""
       },
     });
 

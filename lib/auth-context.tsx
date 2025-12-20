@@ -132,7 +132,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updateProfile = async (data: Partial<User>) => {
     try {
-      // Optimistic update (optional, but makes UI snappy)
       setUser(prev => prev ? { ...prev, ...data } : null);
 
       const token = localStorage.getItem("access_token");
@@ -147,16 +146,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (response.ok) {
         const updatedUser = await response.json();
-        // Merge with existing user data to ensure we don't lose fields not returned
+
         setUser(prev => {
           const newState = { ...prev!, ...updatedUser };
           localStorage.setItem("user", JSON.stringify(newState));
           return newState;
         });
+
         return { success: true };
       } else {
-        const errorData = await response.json();
-        return { error: errorData.message || "Failed to update profile" };
+        const errorData = await response.text();
+        return { error: errorData || "Failed to update profile" };
       }
     } catch (error) {
       console.error("Update profile error:", error);
