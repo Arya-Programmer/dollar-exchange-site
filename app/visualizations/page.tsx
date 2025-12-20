@@ -1,15 +1,11 @@
-"use client"
+"use client";
 
-import { useTheme } from "@/lib/theme-context"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { useTheme } from "@/lib/theme-context";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   LineChart,
   Line,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
   PieChart,
   Pie,
   Cell,
@@ -19,80 +15,35 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts"
-import { useState, useMemo } from "react"
-import { Navbar } from "@/components/dashboard-header"
-import { useAuth } from "@/lib/auth-context"
-import { Lock } from "lucide-react"
-import Link from "next/link"
-
-function CustomTooltip({
-  active,
-  payload,
-  label,
-  colors,
-}: {
-  active?: boolean
-  payload?: any[]
-  label?: string
-  colors: any
-}) {
-  if (!active || !payload || !payload.length) return null
-
-  return (
-    <div
-      className="px-4 py-3 rounded-xl shadow-lg"
-      style={{
-        backgroundColor: colors.card,
-        border: `1px solid ${colors.border}`,
-        boxShadow: `0 10px 40px -10px ${colors.primary}30`,
-      }}
-    >
-      <p className="font-semibold mb-1" style={{ color: colors.text }}>
-        {label}
-      </p>
-      {payload.map((entry: any, index: number) => (
-        <p key={index} style={{ color: entry.color || colors.primary }}>
-          {entry.name}: <span className="font-bold">{entry.value?.toLocaleString()}</span>
-        </p>
-      ))}
-    </div>
-  )
-}
-
-function calculateDomain(data: any[], dataKey: string): [number, number] {
-  const values = data.map((d) => d[dataKey]).filter((v) => typeof v === "number")
-  if (values.length === 0) return [0, 100]
-
-  const min = Math.min(...values)
-  const max = Math.max(...values)
-  const range = max - min
-
-  // Add padding of 2x the range on each side for better visualization
-  const padding = range * 2
-  const domainMin = Math.floor((min - padding) / 5) * 5
-  const domainMax = Math.ceil((max + padding) / 5) * 5
-
-  return [Math.max(0, domainMin), domainMax]
-}
+import { useState, useMemo } from "react";
+import { Navbar } from "@/components/dashboard-header";
+import { useAuth } from "@/lib/auth-context";
+import { Lock } from "lucide-react";
+import Link from "next/link";
+import { CustomTooltip } from "@/components/ui/tooltip";
+import calculateDomain from "@/lib/calculate-domain";
+import CityRateComparison from "@/components/visualizations/city-comparison-chart";
+import { useCityComparisonData } from "@/hooks/visualizations/use-city-comparison-data";
+import CityTrendChart from "@/components/visualizations/city-trend-chart";
 
 export default function Visualizations() {
-  const { colors, loading: themeLoading } = useTheme()
-  const { user } = useAuth()
-  const [selectedChart, setSelectedChart] = useState<string>("comparison")
+  const { colors, loading: themeLoading } = useTheme();
+  const { user } = useAuth();
+  const [selectedChart, setSelectedChart] = useState<string>("comparison");
+  const cityComparisonData = useCityComparisonData();
 
-  const hasPremiumAccess = user?.subscription === "gold" || user?.subscription === "platinum"
+  const hasPremiumAccess = user?.subscription === "gold" || user?.subscription === "platinum";
 
-  // Mock data
-  const cityComparisonData = useMemo(
+  const distributionData = useMemo(
     () => [
-      { city: "Baghdad", rate: 1408, volume: 4000 },
-      { city: "Erbil", rate: 1410, volume: 3000 },
-      { city: "Sulaymaniyah", rate: 1409, volume: 2000 },
-      { city: "Basra", rate: 1407, volume: 2780 },
-      { city: "Duhok", rate: 1411, volume: 1890 },
+      { name: "Baghdad", value: 35 },
+      { name: "Erbil", value: 25 },
+      { name: "Basra", value: 20 },
+      { name: "Sulaymaniyah", value: 15 },
+      { name: "Duhok", value: 5 },
     ],
     [],
-  )
+  );
 
   const trendData = useMemo(
     () => [
@@ -104,22 +55,9 @@ export default function Visualizations() {
       { date: "Feb 5", rate: 1415 },
     ],
     [],
-  )
+  );
 
-  const distributionData = useMemo(
-    () => [
-      { name: "Baghdad", value: 35 },
-      { name: "Erbil", value: 25 },
-      { name: "Basra", value: 20 },
-      { name: "Sulaymaniyah", value: 15 },
-      { name: "Duhok", value: 5 },
-    ],
-    [],
-  )
-
-  const rateDomain = useMemo(() => calculateDomain(cityComparisonData, "rate"), [cityComparisonData])
-  const trendDomain = useMemo(() => calculateDomain(trendData, "rate"), [trendData])
-  const volumeDomain = useMemo(() => calculateDomain(cityComparisonData, "volume"), [cityComparisonData])
+  const volumeDomain = useMemo(() => calculateDomain(trendData, "volume"), [cityComparisonData])
 
   if (themeLoading || !colors) {
     return (
@@ -140,70 +78,14 @@ export default function Visualizations() {
       title: "City Rate Comparison",
       description: "Exchange rates across Iraqi cities",
       locked: false, // Free
-      component: (
-        <ResponsiveContainer width="100%" height={280}>
-          <BarChart data={cityComparisonData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={colors.border} opacity={0.5} />
-            <XAxis
-              dataKey="city"
-              stroke={colors.textMuted}
-              tick={{ fill: colors.textMuted, fontSize: 12 }}
-              axisLine={{ stroke: colors.border }}
-            />
-            <YAxis
-              stroke={colors.textMuted}
-              tick={{ fill: colors.textMuted, fontSize: 12 }}
-              axisLine={{ stroke: colors.border }}
-              domain={rateDomain}
-              tickFormatter={(value) => value.toLocaleString()}
-            />
-            <Tooltip content={<CustomTooltip colors={colors} />} cursor={{ fill: `${colors.primary}10` }} />
-            <Bar dataKey="rate" fill={colors.primary} radius={[8, 8, 0, 0]} animationDuration={800} />
-          </BarChart>
-        </ResponsiveContainer>
-      ),
+      component: <CityRateComparison colors={colors} />,
     },
     {
       id: "trend",
-      title: "30-Day Trend",
-      description: "Historical exchange rate movement",
+      title: "7-Week Trend",
+      description: "Historical exchange rate movement for the last 7 weeks",
       locked: false, // Free
-      component: (
-        <ResponsiveContainer width="100%" height={280}>
-          <AreaChart data={trendData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-            <defs>
-              <linearGradient id="colorRate" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={colors.primary} stopOpacity={0.4} />
-                <stop offset="95%" stopColor={colors.primary} stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke={colors.border} opacity={0.5} />
-            <XAxis
-              dataKey="date"
-              stroke={colors.textMuted}
-              tick={{ fill: colors.textMuted, fontSize: 12 }}
-              axisLine={{ stroke: colors.border }}
-            />
-            <YAxis
-              stroke={colors.textMuted}
-              tick={{ fill: colors.textMuted, fontSize: 12 }}
-              axisLine={{ stroke: colors.border }}
-              domain={trendDomain}
-              tickFormatter={(value) => value.toLocaleString()}
-            />
-            <Tooltip content={<CustomTooltip colors={colors} />} />
-            <Area
-              type="monotone"
-              dataKey="rate"
-              stroke={colors.primary}
-              strokeWidth={2}
-              fillOpacity={1}
-              fill="url(#colorRate)"
-              animationDuration={800}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      ),
+      component: <CityTrendChart colors={colors} />
     },
     {
       id: "volume",
@@ -212,7 +94,7 @@ export default function Visualizations() {
       locked: true, // Premium only
       component: (
         <ResponsiveContainer width="100%" height={280}>
-          <LineChart data={cityComparisonData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <LineChart data={cityComparisonData.cityData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             <CartesianGrid strokeDasharray="3 3" stroke={colors.border} opacity={0.5} />
             <XAxis
               dataKey="city"
@@ -319,7 +201,9 @@ export default function Visualizations() {
                   </div>
 
                   {/* Chart content */}
-                  <div className={isLocked ? "blur-xs pointer-events-none select-none" : ""}>{chart.component}</div>
+                  <div className={isLocked ? "blur-xs pointer-events-none select-none" : ""}>
+                    {chart.component}
+                  </div>
 
                   {isLocked && (
                     <div

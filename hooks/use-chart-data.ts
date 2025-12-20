@@ -1,15 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
+import { ExchangeRate } from "@/lib/interfaces"
 
-interface ExchangeRate {
-  id: number;
-  city: string;
-  rate_type: string;
-  rate: number;
-  timestamp: string;
-  message_id?: number;
-}
 
 export function useChartData(filteredRates: ExchangeRate[]) {
   // Memoize: Transform data for chart

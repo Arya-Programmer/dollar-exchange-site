@@ -63,18 +63,17 @@ export const CurrentRateCard = memo(function CurrentRateCard({
         boxShadow: `0 20px 40px ${cardTheme.primary}20, 0 10px 20px ${cardTheme.primary}10`,
       }}
     >
-      {/* Banknote background with sophisticated masking */}
       <div className="absolute inset-0">
         {/* Main banknote image */}
         <div className="absolute right-0 top-0 w-full h-full opacity-25">
           <Image
-            src={is5k ? "/images/5000-dinar.png" : "/images/25000-dinar.jpeg"}
+            src={is5k ? "/images/5000-dinar.png" : "/images/25000-dinar.jpg"}
             alt={is5k ? "5000 Iraqi Dinar note" : "25000 Iraqi Dinar note"}
             fill
             style={{
               objectFit: "cover",
               objectPosition: "center right",
-              transform: "scale(1.1)",
+              transform: "scale(1.05)",
             }}
             priority
           />

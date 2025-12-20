@@ -1,15 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-
-interface ExchangeRate {
-  id: number
-  city: string
-  rate_type: string
-  rate: number
-  timestamp: string
-  message_id?: number
-}
+import { ExchangeRate } from "@/lib/interfaces"
 
 export function useExchangeData(selectedCity: string) {
   const [exchangeData, setExchangeData] = useState<ExchangeRate[]>([])
