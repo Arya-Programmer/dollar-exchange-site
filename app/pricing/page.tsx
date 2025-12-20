@@ -1,15 +1,18 @@
 "use client"
 
 import type React from "react"
-import { useTheme } from "@/lib/theme-context"
-import { useAuth } from "@/lib/auth-context"
-import { useRouter } from "next/navigation"
+import { useState } from "react"
+
+import { CheckCircle, Zap, Crown, Code } from "lucide-react"
+
 import Link from "next/link"
+
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { CheckCircle, Zap, Crown, Code } from "lucide-react"
-import { useState } from "react"
 import Navbar from "@/components/globals/navbar"
+
+import { useAuth } from "@/lib/auth-context"
+import { useTheme } from "@/lib/theme-context"
 
 export default function Pricing() {
   const { colors, loading: themeLoading } = useTheme()
