@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import {
   Zap, Crown, TrendingUp, Clock, BarChart3,
-  User as UserIcon, Mail, Calendar, Edit2, Save, X, FileText, ArrowLeft
+  User as UserIcon, Mail, Calendar, Edit2, Save, X, FileText, ArrowLeft, AlertCircle
 } from "lucide-react"
 import { useEffect, useState } from "react"
 
@@ -20,6 +20,7 @@ export default function Dashboard() {
 
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [errors, setErrors] = useState<string[]>([])
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -29,7 +30,8 @@ export default function Dashboard() {
   })
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && user === null) {
+      router.push("/");
       openAuthModal();
     } else if (user) {
       setFormData({
@@ -44,8 +46,11 @@ export default function Dashboard() {
 
   const handleSave = async () => {
     if (!user) return;
+
+    setErrors([]);
     setIsSaving(true);
-    const toUpdate = {}
+
+    const toUpdate: any = {}
     Object.keys(formData).forEach(item => {
       // @ts-ignore
       if (user[item] !== formData[item]) {
@@ -53,13 +58,19 @@ export default function Dashboard() {
         toUpdate[item] = formData[item];
       }
     });
-    let result;
-    if (toUpdate) {
-      result = await updateProfile(toUpdate);
+
+    if (Object.keys(toUpdate).length === 0) {
+      setIsSaving(false);
+      setIsEditing(false);
+      return;
     }
+
+    const result = await updateProfile(toUpdate);
     setIsSaving(false);
 
-    if (result?.success || !result?.error) {
+    if (result?.error) {
+      setErrors(Array.isArray(result.error) ? result.error : [result.error]);
+    } else {
       setIsEditing(false);
     }
   }
@@ -74,6 +85,7 @@ export default function Dashboard() {
         date_of_birth: user.date_of_birth || "",
       })
     }
+    setErrors([]);
     setIsEditing(false);
   }
 
@@ -96,6 +108,24 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen pt-12 pb-12 py-1" style={{ backgroundColor: colors.background }}>
+      {/* Custom Scrollbar Styles for Error Box */}
+      <style jsx global>{`
+        .error-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .error-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .error-scrollbar::-webkit-scrollbar-thumb {
+          background-color: #ef4444;
+          border-radius: 9999px;
+        }
+        .error-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: #ef4444 transparent;
+        }
+      `}</style>
+
       <div className="max-w-7xl mx-auto px-6 space-y-8">
 
         {/* Header Section with Return Button */}
@@ -168,6 +198,21 @@ export default function Dashboard() {
             </div>
 
             <div className="space-y-4">
+
+              {/* Error Display Section */}
+              {isEditing && errors.length > 0 && (
+                <div className="flex flex-col gap-2 p-3 rounded-xl bg-red-500/10 text-red-500 max-h-30 overflow-y-auto error-scrollbar animate-in slide-in-from-top-2 fade-in duration-200">
+                  {errors.map((error, index) => (
+                    <div key={index} className="flex items-start gap-2 shrink-0">
+                      <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                      <p className="text-sm leading-tight">
+                        {error}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               {/* First & Last Name */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -248,7 +293,7 @@ export default function Dashboard() {
                   <textarea
                     value={formData.bio}
                     onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                    className="flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex min-h-20 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     style={{
                       backgroundColor: colors.backgroundElevated,
                       color: colors.text,

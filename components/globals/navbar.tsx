@@ -89,7 +89,7 @@ const Navbar = memo(function Navbar() {
                           border: `1px solid ${colors.border}`,
                         }}
                       >
-                        {user.email}
+                        {user.first_name + " " + user.last_name || user.email}
                       </span>
                     </Link>
                     <button
@@ -183,7 +183,7 @@ const Navbar = memo(function Navbar() {
             <div className="pt-4 border-t" style={{ borderColor: colors.border }}>
               {user ? (
                 <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-3 px-2">
+                  <Link href="/profile" className="flex items-center gap-3 px-2">
                     <div
                       className="h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
                       style={{ backgroundColor: colors.primary }}
@@ -191,9 +191,9 @@ const Navbar = memo(function Navbar() {
                       {user.email.charAt(0).toUpperCase()}
                     </div>
                     <span className="text-sm font-medium truncate" style={{ color: colors.text }}>
-                      {user.email}
+                      {user.first_name + " " + user.last_name || user.email}
                     </span>
-                  </div>
+                  </Link>
                   <button
                     onClick={() => {
                       logout()

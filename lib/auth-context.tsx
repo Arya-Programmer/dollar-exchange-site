@@ -44,8 +44,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch (e) {
         localStorage.removeItem("user")
       }
-      setLoading(false)
     }
+    setLoading(false);
   }, [])
 
   const signup = async (email: string, password: string, confirmPassword: string) => {
@@ -132,6 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updateProfile = async (data: Partial<User>) => {
     try {
+      const prevUser = user;
       setUser(prev => prev ? { ...prev, ...data } : null);
 
       const token = localStorage.getItem("access_token");
@@ -144,8 +145,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify(data)
       });
 
+      if (response.status === 401 && user) {
+        logout();
+        openAuthModal("signin");
+        return { error: "Session expired. Please sign in again." }
+      }
+
+      const resData = await response.text();
       if (response.ok) {
-        const updatedUser = await response.json();
+        const updatedUser = JSON.parse(resData);
 
         setUser(prev => {
           const newState = { ...prev!, ...updatedUser };
@@ -155,8 +163,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         return { success: true };
       } else {
-        const errorData = await response.text();
-        return { error: errorData || "Failed to update profile" };
+        let errorData;
+        try {
+          errorData = JSON.parse(resData);
+        } catch (e) {
+          errorData = resData;
+        }
+        console.log("ERROR CORRUPT TOKEN ", errorData);
+        setUser(prevUser);
+        return { error: errorData.error || "Failed to update profile" };
       }
     } catch (error) {
       console.error("Update profile error:", error);

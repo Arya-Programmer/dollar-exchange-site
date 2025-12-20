@@ -41,9 +41,8 @@ export async function PATCH(request: NextRequest) {
 
       if (response) {
         console.log("ERRORS LENGTH", errors, errors.length, data);
-        return NextResponse.json({ error: errors }, {
+        return NextResponse.json({ error: data?.detail || errors || data }, {
           status: response.status,
-          headers: response.headers
         })
       } else {
         return NextResponse.json(

@@ -33,14 +33,14 @@ export default function Pricing() {
     {
       name: "Free",
       icon: Zap,
-      price: "$0",
+      price: "0 IQD",
       period: "Forever",
       description: "Get started with essential features",
       features: [
         "Price updates every 2 hours",
-        "Current rates only",
         "No historical data",
-        "Iraqi cities only",
+        "All Iraqi cities",
+        "Current rates only",
         "Community support",
       ],
       highlighted: user?.tier == "free" || false
@@ -48,7 +48,7 @@ export default function Pricing() {
     {
       name: "Gold",
       icon: Crown,
-      price: "$2.99",
+      price: "1000 IQD",
       period: "/month",
       description: "Advanced tracking and insights",
       features: [
@@ -63,7 +63,7 @@ export default function Pricing() {
     {
       name: "Premium",
       icon: Crown,
-      price: "$5.99",
+      price: "2500 IQD",
       period: "/month",
       description: "Professional-grade access",
       features: [
@@ -179,12 +179,12 @@ export default function Pricing() {
                         border: `1px solid ${colors.border}`,
                       }}
                       onClick={() => {
-                        if (!user) {
+                        if (!user && !tier.highlighted) {
                           openAuthModal();
                         }
                       }}
                     >
-                      {user ? "Select Plan" : "Sign Up"}
+                      {user ? tier.highlighted ? "Current Plan" : "Select Plan" : "Sign Up"}
                     </button>
                   </Card>
                 )

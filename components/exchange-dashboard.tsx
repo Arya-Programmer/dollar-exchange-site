@@ -125,7 +125,7 @@ export default function ExchangeDashboard() {
               Export Data
             </h3>
             <p className="text-sm" style={{ color: colors.textMuted }}>
-              Download the last 30 days of exchange rate history as a CSV file.
+              Download the last 3 days of exchange rate history as a CSV file.
             </p>
           </div>
 
