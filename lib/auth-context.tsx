@@ -21,6 +21,7 @@ interface AuthContextType {
   signup: (email: string, password: string, confirmPassword: string, subscription?: string) => Promise<void>
   signin: (email: string, password: string) => Promise<void>
   logout: () => void
+  updateProfile: (data: Partial<User>) => Promise<any>
   showAuthModal: boolean
   authModalMode: "signin" | "signup"
   openAuthModal: (mode?: "signin" | "signup") => void
@@ -129,6 +130,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const updateProfile = async (data: Partial<User>) => {
+    try {
+      // Optimistic update (optional, but makes UI snappy)
+      setUser(prev => prev ? { ...prev, ...data } : null);
+
+      const token = localStorage.getItem("access_token");
+      const response = await fetch("api/auth/profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        const updatedUser = await response.json();
+        // Merge with existing user data to ensure we don't lose fields not returned
+        setUser(prev => {
+          const newState = { ...prev!, ...updatedUser };
+          localStorage.setItem("user", JSON.stringify(newState));
+          return newState;
+        });
+        return { success: true };
+      } else {
+        const errorData = await response.json();
+        return { error: errorData.message || "Failed to update profile" };
+      }
+    } catch (error) {
+      console.error("Update profile error:", error);
+      return { error: "Network error occurred" };
+    }
+  }
+
   const logout = () => {
     console.log("SOMEONE CALLED LOGOUT");
     setUser(null);
@@ -153,6 +188,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading,
         signup,
         signin,
+        updateProfile,
         logout,
         showAuthModal,
         authModalMode,
