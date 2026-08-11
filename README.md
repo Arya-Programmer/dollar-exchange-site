@@ -1,3 +1,5 @@
+
+
 # 🏛️ Iraqi Exchange Dashboard
 
 A modern, real-time currency exchange rate dashboard for Iraqi cities, featuring beautiful banknote-inspired design and comprehensive rate tracking.
@@ -125,7 +127,6 @@ npm run dev          # Start development server
 npm run build        # Build for production
 npm run start        # Start production server
 npm run lint         # Run ESLint
-npm run type-check   # TypeScript type checking
 \`\`\`
 
 ### Code Quality
